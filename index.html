@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> 智慧野趣生活GＯ➔ 課堂互動講義</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Noto Sans TC', 'Quicksand', sans-serif;
+            background-color: #f6faf5;
+            transition: font-size 0.2s ease-in-out;
+        }
+        /* Color themes matching the designated aesthetic */
+        .color-soft-yellow { background-color: #FFF2CC; }
+        .color-soft-green { background-color: #E2EFDA; }
+        .color-soft-blue { background-color: #DDEBF7; }
+        .color-soft-red { background-color: #FCE4D6; }
+        .color-soft-purple { background-color: #E2D9F3; }
+
+        /* Custom soft card shadows */
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(46, 125, 50, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            border: 3px solid #e0ede0;
+        }
+        /* Confetti Canvas animation styling */
+        #confetti-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 50;
+        }
+    </style>
+</head>
+<body class="text-gray-800 pb-20">
+
+    <!-- Confetti layer for simulated iNaturalist success -->
+    <div class="relative overflow-hidden">
+        <canvas id="confetti-canvas"></canvas>
+    </div>
+
+    <!-- Top Utility Bar: Font Size Control -->
+    <div class="bg-emerald-800 text-white py-2 px-4 sticky top-0 z-50 flex justify-between items-center shadow-md">
+        <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-red-400 animate-pulse"></span>
+            <span class="text-sm font-bold tracking-wider">苗栗銅鑼 ➔ 黃金梯田露營區實地教學</span>
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="text-xs md:text-sm font-bold">字體大小：</span>
+            <button onclick="changeFontSize('normal')" id="btn-font-normal" class="bg-emerald-700 hover:bg-emerald-600 font-bold px-3 py-1 rounded text-xs transition active:scale-95 border-2 border-white">標準字</button>
+            <button onclick="changeFontSize('large')" id="btn-font-large" class="bg-amber-500 hover:bg-amber-400 font-extrabold px-3 py-1 rounded text-sm text-amber-950 transition active:scale-95 border-2 border-amber-600">👵 放大字</button>
+            <button onclick="changeFontSize('huge')" id="btn-font-huge" class="bg-red-500 hover:bg-red-400 font-black px-3 py-1 rounded text-base text-white transition active:scale-95 border-2 border-red-700">👴 超大字</button>
+        </div>
+    </div>
+
+    <!-- Hero Header area -->
+    <header class="bg-gradient-to-b from-emerald-50 to-emerald-100 py-8 px-4 text-center border-b-4 border-emerald-600 relative">
+        <div class="max-w-4xl mx-auto flex flex-col items-center">
+            <!-- Leaf & Birds Decoration -->
+            <div class="flex gap-4 mb-3">
+                <span class="text-4xl text-emerald-600"><i class="fa-solid fa-seedling"></i></span>
+                <span class="text-4xl text-sky-500"><i class="fa-solid fa-dove"></i></span>
+                <span class="text-4xl text-amber-500"><i class="fa-solid fa-tree"></i></span>
+            </div>
+            
+            <!-- Dynamic Main Title -->
+            <h1 class="text-3xl md:text-5xl font-black text-emerald-900 leading-tight mb-2 flex flex-wrap justify-center items-center gap-2">
+                <span>咱个生活智慧</span>
+                <span class="text-emerald-600 border-b-4 border-dashed border-emerald-600 px-2 pb-1">大自然觀察家</span>
+            </h1>
+            <p class="text-base md:text-xl font-bold text-gray-600 max-w-2xl mt-2">
+                不用懂英文，隨手拍花草！天天好習慣，身體健康，地球更有感！🌍
+            </p>
+
+            <!-- Embedded SDGs badges to show standard goals (SDG 11, 14, 15) styled with soft pastel cards -->
+            <div class="flex flex-wrap gap-3 mt-6 justify-center">
+                <div class="flex items-center gap-2 bg-[#F39200] text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm">
+                    <img src="SDG-11_2.png" onerror="this.src='https://placehold.co/40x40/f39200/ffffff?text=11'" class="w-8 h-8 object-contain" alt="SDG 11">
+                    <span>SDG 11 永續庄頭</span>
+                </div>
+                <div class="flex items-center gap-2 bg-[#00AED9] text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm">
+                    <img src="SDG-14_2.png" onerror="this.src='https://placehold.co/40x40/00aed9/ffffff?text=14'" class="w-8 h-8 object-contain" alt="SDG 14">
+                    <span>SDG 14 海洋保育</span>
+                </div>
+                <div class="flex items-center gap-2 bg-[#56C02B] text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow-sm">
+                    <img src="SDG-15_2.png" onerror="this.src='https://placehold.co/40x40/56c02b/ffffff?text=15'" class="w-8 h-8 object-contain" alt="SDG 15">
+                    <span>SDG 15 陸域生態</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Tabs for the Interactive Handout -->
+    <nav class="bg-white border-b border-gray-200 sticky top-12 z-40 shadow-sm overflow-x-auto whitespace-nowrap">
+        <div class="max-w-4xl mx-auto flex justify-between px-2">
+            <button onclick="switchTab('tab-setup')" id="nav-tab-setup" class="tab-button inline-flex items-center gap-2 py-4 px-4 font-black text-sm md:text-base border-b-4 border-emerald-600 text-emerald-700 transition">
+                <i class="fa-solid fa-download"></i> 1.下載與註冊
+            </button>
+            <button onclick="switchTab('tab-sim')" id="nav-tab-sim" class="tab-button inline-flex items-center gap-2 py-4 px-4 font-black text-sm md:text-base border-b-4 border-transparent text-gray-500 hover:text-emerald-700 transition">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> 2.相機模擬
+            </button>
+            <button onclick="switchTab('tab-sdg')" id="nav-tab-sdg" class="tab-button inline-flex items-center gap-2 py-4 px-4 font-black text-sm md:text-base border-b-4 border-transparent text-gray-500 hover:text-emerald-700 transition">
+                <i class="fa-solid fa-globe"></i> 3.永續17招
+            </button>
+            <button onclick="switchTab('tab-stories')" id="nav-tab-stories" class="tab-button inline-flex items-center gap-2 py-4 px-4 font-black text-sm md:text-base border-b-4 border-transparent text-gray-500 hover:text-emerald-700 transition">
+                <i class="fa-solid fa-lightbulb"></i> 4.有感案例
+            </button>
+            <button onclick="switchTab('tab-rain')" id="nav-tab-rain" class="tab-button inline-flex items-center gap-2 py-4 px-4 font-black text-sm md:text-base border-b-4 border-transparent text-gray-500 hover:text-emerald-700 transition">
+                <i class="fa-solid fa-cloud-showers-heavy"></i> 5.下雨備案
+            </button>
+            <button onclick="switchTab('tab-line')" id="nav-tab-line" class="tab-button inline-flex items-center gap-2 py-4 px-4 font-black text-sm md:text-base border-b-4 border-transparent text-gray-500 hover:text-emerald-700 transition">
+                <i class="fa-solid fa-share-nodes"></i> 6.一鍵分享
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Dynamic Content Wrapper -->
+    <main class="max-w-4xl mx-auto px-4 py-8" id="text-container">
+
+        <!-- TAB 1: INSTALLATION & SIGNUP GUIDE -->
+        <section id="tab-setup" class="tab-content block space-y-6">
+            <!-- Setup Guide Card -->
+            <div class="bg-white rounded-[2rem] p-6 card-shadow border-t-8 border-emerald-500">
+                <h2 class="text-2xl font-black text-emerald-800 mb-4 flex items-center gap-2">
+                    <span class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700">
+                        <i class="fa-solid fa-mobile-screen-button"></i>
+                    </span>
+                    上課前準備：手機下載與安裝
+                </h2>
+                
+                <!-- OS Selection Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- iPhone Guide -->
+                    <div class="bg-sky-50 rounded-2xl p-5 border-2 border-sky-200">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-3xl text-sky-600"><i class="fa-brands fa-apple"></i></span>
+                            <div>
+                                <h3 class="text-xl font-bold text-sky-950">iPhone 蘋果手機</h3>
+                                <p class="text-xs text-sky-600 font-extrabold">打開 App Store 下載</p>
+                            </div>
+                        </div>
+                        <ol class="space-y-3 text-sm text-gray-700 font-bold list-decimal list-inside">
+                            <li>點擊打開藍色的 <span class="bg-sky-200 text-sky-900 px-1 rounded">App Store</span> 應用程式。</li>
+                            <li>點擊下方放大鏡，搜尋「<span class="bg-yellow-100 text-emerald-800 px-1 rounded">iNaturalist</span>」。</li>
+                            <li>看見綠色小鳥圖標，點選「取得」或「下載」按鈕。</li>
+                        </ol>
+                        <!-- Simulation of search screen -->
+                        <div class="bg-white rounded-xl p-3 mt-4 border border-sky-100 flex items-center gap-3">
+                            <img src="1000006782.jpg" onerror="this.src='https://placehold.co/100x100/e0f2fe/0284c7?text=iNat'" class="w-16 h-16 rounded-xl object-cover border" alt="App Store download">
+                            <div>
+                                <h4 class="font-bold text-sm text-gray-800">iNaturalist 大自然觀察</h4>
+                                <span class="bg-sky-500 text-white text-xs px-2.5 py-1 rounded-full font-black inline-block mt-1"><i class="fa-solid fa-cloud-arrow-down"></i> 免費下載</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Android Guide -->
+                    <div class="bg-emerald-50 rounded-2xl p-5 border-2 border-emerald-200">
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-3xl text-emerald-600"><i class="fa-brands fa-android"></i></span>
+                            <div>
+                                <h3 class="text-xl font-bold text-emerald-950">Android 安卓手機</h3>
+                                <p class="text-xs text-emerald-600 font-extrabold">打開 Play 商店下載</p>
+                            </div>
+                        </div>
+                        <ol class="space-y-3 text-sm text-gray-700 font-bold list-decimal list-inside">
+                            <li>點擊打開彩色的 <span class="bg-emerald-200 text-emerald-900 px-1 rounded">Play 商店</span> 應用程式。</li>
+                            <li>點擊最上方搜尋欄，搜尋輸入「<span class="bg-yellow-100 text-emerald-800 px-1 rounded">iNaturalist</span>」。</li>
+                            <li>認明綠色小鳥，點選「安裝」按鈕下載。</li>
+                        </ol>
+                        <!-- Simulated logo play -->
+                        <div class="bg-white rounded-xl p-3 mt-4 border border-emerald-100 flex items-center gap-3">
+                            <img src="inaturalist-logo-png_seeklogo-381899_2.png" onerror="this.src='https://placehold.co/100x100/e2f0d9/2e7d32?text=iNat'" class="w-16 h-16 rounded-xl object-contain" alt="iNaturalist bird logo">
+                            <div>
+                                <h4 class="font-bold text-sm text-gray-800">Google Play 商店</h4>
+                                <span class="bg-emerald-600 text-white text-xs px-2.5 py-1 rounded-full font-black inline-block mt-1"><i class="fa-solid fa-download"></i> 點我安裝</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Google Account Registration -->
+                <div class="bg-amber-50 rounded-2xl p-5 border-2 border-amber-200 mt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="space-y-2">
+                        <h3 class="text-lg font-black text-amber-900 flex items-center gap-2">
+                            <i class="fa-brands fa-google text-red-500"></i> 免背新密碼！一鍵 Google 帳號註冊
+                        </h3>
+                        <p class="text-sm text-gray-700 font-bold">
+                            第一次開啟軟體，千萬不要自己慢慢打新密碼！<br>
+                            直接點選 <strong class="text-amber-800 bg-amber-100 px-1 rounded">「使用 Google 帳號繼續」</strong> 或 <strong class="text-sky-800 bg-sky-100 px-1 rounded">「使用 Facebook 繼續」</strong>，免密碼，一秒完成，超簡單！
+                        </p>
+                    </div>
+                    <!-- Google Button Simulation -->
+                    <button class="bg-white border-2 border-gray-300 rounded-xl px-5 py-3 shadow-md hover:bg-gray-50 flex items-center gap-3 font-extrabold text-sm md:text-base text-gray-700 transition active:scale-95">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_Logo.svg" alt="Google logo" class="w-6 h-6">
+                        以 Google 帳號繼續
+                    </button>
+                </div>
+
+                <!-- Battery Reminder Alert Card -->
+                <div class="bg-red-50 border-3 border-dashed border-red-400 rounded-2xl p-5 mt-6 flex items-center gap-4">
+                    <div class="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center text-red-500 text-3xl shrink-0 animate-bounce">
+                        <i class="fa-solid fa-battery-three-quarters"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-black text-red-950">貼心暖心叮嚀：手機電量充飽飽！</h3>
+                        <p class="text-sm text-gray-700 font-bold">
+                            黃金梯田露營區現場風景如畫、植物豐富，觀察拍照很耗電。<strong>請務必於上課前一晚將手機電量充到 100% 滿格</strong>，或隨身攜帶行動電源，才能玩得盡興不掃興喔！🔋⚡
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 2: INTERACTIVE CAMERA SIMULATOR -->
+        <section id="tab-sim" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-[2rem] p-6 card-shadow border-t-8 border-emerald-500">
+                <h2 class="text-2xl font-black text-emerald-800 mb-2 flex items-center gap-2">
+                    <span class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700">
+                        <i class="fa-solid fa-camera"></i>
+                    </span>
+                    大自然認人神器 ➔ 四步法課堂模擬器
+                </h2>
+                <p class="text-sm text-gray-600 font-bold mb-6">
+                    先在網頁中練習「點、拍、猜、勾」，上課後對準真實植物拍照就秒懂！
+                </p>
+
+                <!-- Interactive Simulator Box -->
+                <div class="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl p-6 text-white relative flex flex-col md:flex-row gap-6 items-center border-4 border-emerald-700 shadow-2xl">
+                    
+                    <!-- Phone Viewfinder Screen Container -->
+                    <div class="w-full md:w-80 h-[450px] bg-black rounded-2xl relative overflow-hidden border-4 border-gray-700 shadow-inner flex flex-col">
+                        <!-- Simulated App Status Bar -->
+                        <div class="bg-black/80 px-4 py-1.5 flex justify-between text-[11px] font-bold tracking-wider z-20">
+                            <span>iNaturalist Sim</span>
+                            <span>100% 🔋</span>
+                        </div>
+                        
+                        <!-- Viewfinder Core Screen -->
+                        <div class="flex-grow relative flex items-center justify-center bg-gray-950">
+                            
+                            <!-- Simulator Screen 1: Ready to tap "+" -->
+                            <div id="sim-screen-1" class="absolute inset-0 flex flex-col items-center justify-center p-4 text-center space-y-4">
+                                <div class="w-16 h-16 rounded-full bg-emerald-600 flex items-center justify-center text-3xl animate-pulse">
+                                    <i class="fa-solid fa-plus"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-black text-lg">準備好尋寶了嗎？</h4>
+                                    <p class="text-xs text-gray-400 mt-1">第一步 ➔ 請點擊下方的綠色大加號！</p>
+                                </div>
+                            </div>
+
+                            <!-- Simulator Screen 2: Viewfinder camera targeting Golden Terrace Campsite Marigold -->
+                            <div id="sim-screen-2" class="absolute inset-0 hidden flex flex-col items-center justify-center bg-emerald-900/10">
+                                <!-- Target crosshair overlay -->
+                                <div class="absolute inset-8 border border-white/20 rounded-xl pointer-events-none flex items-center justify-center">
+                                    <div class="w-12 h-12 border-2 border-dashed border-emerald-400 rounded-full"></div>
+                                </div>
+                                <!-- Plant SVG Vector Graphic (Aromatic Marigold 芳香萬壽菊) -->
+                                <svg class="w-36 h-36 drop-shadow-lg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M50 80C50 80 45 60 50 45C55 60 50 80 50 80Z" fill="#22C55E"/>
+                                    <path d="M50 45C35 45 40 30 50 40C60 30 65 45 50 45Z" fill="#EF4444"/>
+                                    <circle cx="50" cy="40" r="14" fill="#EAB308"/>
+                                    <circle cx="43" cy="34" r="10" fill="#F59E0B"/>
+                                    <circle cx="57" cy="34" r="10" fill="#F59E0B"/>
+                                    <circle cx="50" cy="48" r="11" fill="#F97316"/>
+                                </svg>
+                                <span class="bg-black/60 px-3 py-1 rounded text-[11px] font-bold mt-4">黃金梯田 ➔ 芳香萬壽菊</span>
+                            </div>
+
+                            <!-- Simulator Screen 3: AI Guess suggestions list -->
+                            <div id="sim-screen-3" class="absolute inset-0 hidden bg-gray-100 text-gray-800 p-4 overflow-y-auto flex flex-col justify-between">
+                                <div class="space-y-3">
+                                    <h5 class="font-black text-sm text-gray-500 border-b pb-1">🤖 AI 智慧生物辨識建議</h5>
+                                    <!-- Suggestion Item 1 -->
+                                    <div onclick="selectSuggestion(1)" id="suggest-item-1" class="bg-white border-2 border-emerald-500 rounded-xl p-2.5 flex items-center justify-between cursor-pointer transition">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-2xl text-amber-500"><i class="fa-solid fa-seedling"></i></span>
+                                            <div>
+                                                <h6 class="font-extrabold text-xs">芳香萬壽菊</h6>
+                                                <p class="text-[10px] text-emerald-600 font-bold">信心指數非常高 (99%)</p>
+                                            </div>
+                                        </div>
+                                        <span id="suggest-check-1" class="text-emerald-600 text-lg"><i class="fa-solid fa-circle-check"></i></span>
+                                    </div>
+                                    <!-- Suggestion Item 2 -->
+                                    <div onclick="selectSuggestion(2)" id="suggest-item-2" class="bg-white border-2 border-transparent rounded-xl p-2.5 flex items-center justify-between cursor-pointer transition">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-2xl text-amber-600"><i class="fa-solid fa-leaf"></i></span>
+                                            <div>
+                                                <h6 class="font-extrabold text-xs">萬壽菊屬 (Tagetes)</h6>
+                                                <p class="text-[10px] text-gray-500 font-bold">信心指數中等 (82%)</p>
+                                            </div>
+                                        </div>
+                                        <span id="suggest-check-2" class="text-gray-300 text-lg"><i class="fa-regular fa-circle"></i></span>
+                                    </div>
+                                </div>
+                                <p class="text-[10px] text-emerald-700 bg-emerald-50 p-2 rounded-lg font-bold border border-emerald-200">
+                                    💡 提示：點選第一個最像、信心指數最高的品種！
+                                </p>
+                            </div>
+
+                            <!-- Simulator Screen 4: Celebratory virtual observations certificate -->
+                            <div id="sim-screen-4" class="absolute inset-0 hidden bg-gradient-to-b from-emerald-700 to-emerald-900 text-center p-6 flex flex-col items-center justify-center space-y-4">
+                                <div class="w-16 h-16 rounded-full bg-yellow-400 text-emerald-950 flex items-center justify-center text-3xl shadow-lg border-4 border-white animate-bounce">
+                                    <i class="fa-solid fa-award"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-black text-xl text-yellow-300">🎉 上傳成功！</h4>
+                                    <p class="text-xs text-white/90 font-bold mt-2 leading-relaxed">
+                                        您成功記錄了「芳香萬壽菊」！已被列為國際公民科學專案中。
+                                    </p>
+                                </div>
+                                <button onclick="resetSimulator()" class="bg-white text-emerald-900 font-black text-xs px-4 py-2 rounded-full shadow hover:bg-gray-100 transition active:scale-95">再玩一次</button>
+                            </div>
+
+                        </div>
+
+                        <!-- Simulated App Bottom Controls Drawer -->
+                        <div class="bg-gray-900/90 py-4 px-4 border-t border-gray-800 flex justify-around items-center z-10">
+                            <!-- Bottom control buttons -->
+                            <button onclick="simAction('plus')" id="sim-btn-plus" class="w-12 h-12 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center text-xl transition active:scale-95 shadow">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                            <button onclick="simAction('camera')" id="sim-btn-camera" class="w-12 h-12 rounded-full bg-white hover:bg-gray-100 text-gray-900 hidden flex items-center justify-center text-xl transition active:scale-95 shadow">
+                                <i class="fa-solid fa-camera"></i>
+                            </button>
+                            <button onclick="simAction('guess')" id="sim-btn-guess" class="bg-amber-400 hover:bg-amber-300 text-amber-950 font-black text-xs px-4 py-2 rounded-xl hidden transition active:scale-95 shadow-md">
+                                🤖 點我猜名字
+                            </button>
+                            <button onclick="simAction('check')" id="sim-btn-check" class="w-12 h-12 rounded-full bg-emerald-500 hover:bg-emerald-400 text-white hidden flex items-center justify-center text-xl transition active:scale-95 shadow">
+                                <i class="fa-solid fa-check"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Simulator Side Instructions panel -->
+                    <div class="flex-grow space-y-4">
+                        <h3 class="text-xl font-black text-yellow-400">觀察家速成 ➔ 四步驟口訣</h3>
+                        
+                        <!-- Step Details List -->
+                        <div class="space-y-3">
+                            <div id="sim-step-box-1" class="bg-white/10 rounded-xl p-3 border-2 border-emerald-500 transition">
+                                <span class="bg-emerald-600 text-white font-extrabold text-xs px-2.5 py-0.5 rounded-full">1. 點</span>
+                                <h4 class="font-bold text-sm inline-block ml-2 text-white">點擊綠色加號</h4>
+                                <p class="text-xs text-gray-300 mt-1 pl-12">開啟相機功能，準備為植物拍照。</p>
+                            </div>
+                            <div id="sim-step-box-2" class="bg-white/5 rounded-xl p-3 border border-transparent transition">
+                                <span class="bg-sky-600 text-white font-extrabold text-xs px-2.5 py-0.5 rounded-full">2. 拍</span>
+                                <h4 class="font-bold text-sm inline-block ml-2 text-white">拍照對焦拍清楚</h4>
+                                <p class="text-xs text-gray-300 mt-1 pl-12">先拍全身照（大張的），再拍特寫（葉子、花朵、葉背分開拍）。</p>
+                            </div>
+                            <div id="sim-step-box-3" class="bg-white/5 rounded-xl p-3 border border-transparent transition">
+                                <span class="bg-amber-500 text-white font-extrabold text-xs px-2.5 py-0.5 rounded-full">3. 猜</span>
+                                <h4 class="font-bold text-sm inline-block ml-2 text-white">點擊「你看到了什麼」猜名字</h4>
+                                <p class="text-xs text-gray-300 mt-1 pl-12">點擊系統 AI 推薦列表，選擇第一個信心指數最高的正確植物。</p>
+                            </div>
+                            <div id="sim-step-box-4" class="bg-white/5 rounded-xl p-3 border border-transparent transition">
+                                <span class="bg-red-500 text-white font-extrabold text-xs px-2.5 py-0.5 rounded-full">4. 勾</span>
+                                <h4 class="font-bold text-sm inline-block ml-2 text-white">綠色大勾勾上傳</h4>
+                                <p class="text-xs text-gray-300 mt-1 pl-12">確認無誤點擊大勾勾，上傳即成功貢獻大自然資料庫！</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: LOCALIZED SDG 17 GOALS -->
+        <section id="tab-sdg" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-[2rem] p-6 card-shadow border-t-8 border-emerald-500">
+                <h2 class="text-2xl font-black text-emerald-800 mb-2 flex items-center gap-2">
+                    <span class="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700">
+                        <i class="fa-solid fa-hands-holding"></i>
+                    </span>
+                    咱个生活智慧：永續發展 17 招
+                </h2>
+                <p class="text-sm text-gray-600 font-bold mb-6">
+                    不說聽不懂的大道理！這 17 個目標都是您天天在做的「日常好習慣」。
+                </p>
+
+                <!-- Color Key Explanation -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 text-center">
+                    <div class="color-soft-red border-2 border-red-200 rounded-xl p-2 text-xs font-black text-red-950">🔴 1-5 招 ➔ 顧身體顧家庭</div>
+                    <div class="color-soft-blue border-2 border-blue-200 rounded-xl p-2 text-xs font-black text-blue-950">🔵 6-10 招 ➔ 日常省錢大作戰</div>
+                    <div class="color-soft-green border-2 border-green-200 rounded-xl p-2 text-xs font-black text-green-950">🟢 11-14 招 ➔ 愛護庄頭土地</div>
+                    <div class="color-soft-purple border-2 border-purple-200 rounded-xl p-2 text-xs font-black text-purple-950">🟣 15-17 招 ➔ 大家作俠來打拼</div>
+                </div>
+
+                <!-- SDG Grid Items -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    <!-- Goal 1 -->
+                    <div class="color-soft-red rounded-2xl p-4 border-2 border-red-200 flex items-start gap-3">
+                        <div class="w-12 h-12 bg-red-600 text-white rounded-xl flex items-center justify-center font-black text-xl shrink-0 shadow-sm">1</div>
+                        <div>
+                            <h4 class="font-extrabold text-base text-red-950">零貧窮 ── 大家相互看顧</h4>
+                            <p class="text-xs text-gray-700 font-bold mt-1">守望相助，關懷庄內弱勢孤獨老人。</p>
+                        </div>
+                    </div>
+
+                    <!-- Goal 2 -->
+                    <div class="color-soft-red rounded-2xl p-4 border-2 border-red-200 flex items-start gap-3">
+                        <div class="w-12 h-12 bg-amber-600 text-white rounded-xl flex items-center justify-center font-black text-xl shrink-0 shadow-sm">2</div>
+                        <div>
+                            <h4 class="font-extrabold text-base text-amber-950">零飢餓 ── 珍惜食惜物毋討債</h4>
+                            <p class="text-xs text-gray-700 font-bold mt-1">吃多少、煮多少，多吃在地新鮮青菜水果。</p>
+                        </div>
+                    </div>
+
+                    <!-- Goal 3 -->
+                    <div class="color-soft-red rounded-2xl p-4 border-2 border-red-200 flex items-start gap-3">
+                        <div class="w-12 h-12 bg-emerald-600 text-white rounded-xl flex items-center justify-center font-black text-xl shrink-0 shadow-sm">3</div>
+                        <div>
+                            <h4 class="font-extrabold text-base text-emerald-950">良好健康 ── 顧出身體健康不老</h4>
+                            <p class="text-xs text-gray-700 font-bold mt-1">天天來據點運動、拉筋、聊天唱歌、心情好。</p>
+                        </div>
+                    </div>
+
+                    <!-- Goal 4 -->
+                    <div class="color-soft-red rounded-2xl p-4 border-2 border-red-200 flex items-start gap-3">
+                        <div class="w-12 h-12 bg-red-700 text-white rounded-xl flex items-center justify-center font-black text-xl shrink-0 shadow-sm">4</div>
+                        <div>
+                            <h4 class="font-extrabold text-base text-red-950">優質教育 ── 活到老、學到老</h4>
+                            <p class="text-xs text-gray-700 font-bold mt-1">活潑上課、學習新知識（像用手機觀察植物）。</p>
+                        </div>
+                    </div>
+
+                    <!-- Goal 5 -->
+                    <div class="color-soft-red rounded-2xl p-4 border-2 border-red-200 flex items-start gap-3">
+                        <div class="w-12 h-12 bg-red-500 text-white rounded-xl flex items-center justify-center font-black text-xl shrink-0 shadow-sm">5</div>
+                        <div>
+                            <h4 class="font-extrabold text-base text-red-950">性別平等 ── 細哥細妹平平名</h4>
+                            <p class="text-xs text-gray-700 font-bold mt-1">男女分工，阿公阿嬤大家一樣有能力！</p>
+                        </div>
+                    </div>
+
+                    <!-- Goal 6 -->
+                    <div class="color-soft-blue rounded-2xl p-4 border-2 border-blue-200 flex items-start gap-3">
+                        <div class="w-12 h-12 bg-cyan-500 text-white rounded-xl flex items-center justify-center font-black text-xl shrink-0 shadow-sm">6</div>
+                        <div>
+                            <h4 class="font-extrabold text-base text-cyan-950">潔淨飲水 ── 省水資源顧衛生</h4>
+                            <p class="text-xs text-gray-700 font-bold mt-1">淘米水洗菜水拿去澆花；隨手關緊水龍頭。</p>
+                        </div>
+                    </div>
+
+                    <!-- Goal 7 -->
+                    <div class="color-soft-blue rounded-2xl p-4 border-2 border-blue-200 flex items-start gap-3">
+                        <div class="w-12 h-12 bg-yellow-500 text-white rounded-xl flex items-center justify-center font-black text-xl shrink-0 shadow-sm">7</div>
+                        <div>
+                            <h4 class="font-extrabold text-base text-yellow-950">可再生能源 ── 用自然風毋使錢</h4>
+                            <p class="text-xs text-gray-700 font-bold mt-1">出門隨手關燈、拔插頭，多吹自然風少吹冷氣。</p>
+                        </div>
+                    </div>
+
+                    <!-- Goal 8 -->
+                    <div class="color-soft-blue rounded-2xl p-4 border-2 border-blue-200 flex items-start gap-3">
+                        <div class="w-12 h-12 bg-red-900 text-white rounded-xl flex items-center justify-center font-black text-xl shrink-0 shadow-sm">8</div>
+                        <div>
+                            <h4 class="font-extrabold text-base text-red-950">就業與增長 ── 作打拼做人做事</h4>
+                            <p class="text-xs text-gray-700 font-bold mt-1">有尊嚴地做工作，支持在地青創小農發展。</p>
+                        </div>
+                    </div>
+
+                    <!-- Goal 9 -->
+                    <div class="color-soft-blue rounded-2xl p-4 border-2 border-blue-200 flex items-start gap-3">
+                        <div class="w-12 h-12 bg-orange-600 text-white rounded-xl flex items-center justify-center font-black text-xl shrink-0 shadow-sm">9</div>
+                        <div>
+                            <h4 class="font-extrabold text-base text-orange-950">創新基礎 ── 馬路平、坐車方便</h4>
+                            <p class="text-xs text-gray-700 font-bold mt-1">庄內馬路平坦安全，樂齡公車班班準點。</p>
+                        </div>
+                    </div>
+
+                    <!-- Goal 10 -->
+                    <div class="color-soft-blue rounded-2xl p-4 border-2 border-blue-200 flex items-start gap-3">
+                        <div class="w-12 h-12 bg-pink-600 text-white rounded-xl flex items-center justify-center font-black text-xl shrink-0 shadow-sm">10</div>
+                        <div>
+                            <h4 class="font-extrabold text-base text-pink-950">減少不平 ── 無歧視、一家親</h4>
+                            <p class="text-xs text-gray-700 font-bold mt-1">對待新住民、外地客親切友好，互相學習。</p>
+                        </div>
+                    </div>
+
+                    <!-- Goal 11 -->
+                    <div class="color-soft-green rounded-2xl p-4 border-2 border-green-200 flex items-start gap-3">
+                        <div class="w-12 h-12 bg-amber-500 text-white rounded-xl flex items-center justify-center font-black text-xl shrink-0 shadow-sm">11</div>
+                        <div>
+                            <h4 class="font-extrabold text-base text-amber-950">永續庄頭 ── 庄頭整潔無蚊蟲</h4>
+                            <p class="text-xs text-gray-700 font-bold mt-1">定期清掃社區，積水容器記得「巡、倒、清、刷」。</p>
+                        </div>
+                    </div>
+
+                    <!-- Goal 12 -->
+                    <div class="color-soft-green rounded-2xl p-4 border-2 border-green-200 flex items-start gap-3">
+                        <div class="w-12 h-12 bg-orange-700 text-white rounded-xl flex items-center justify-center font-black text-xl shrink-0 shadow-sm">12</div>
+                        <div>
+                            <h4 class="font-extrabold text-base text-orange-950">愛惜物仔 ── 買菜自備茄芷袋</h4>
+                            <p class="text-xs text-gray-700 font-bold mt-1">帶購物袋與環保碗筷出門，少用一次性塑膠袋。</p>
+                        </div>
+                    </div>
+
+                    <!-- Goal 13 -->
+                    <div class="color-soft-green rounded-2xl p-4 border-2 border-green-200 flex items-start gap-3">
+                        <div class="w-12 h-12 bg-emerald-800 text-white rounded-xl flex items-center justify-center font-black text-xl shrink-0 shadow-sm">13</div>
+                        <div>
+                            <h4 class="font-extrabold text-base text-emerald-950">少碳行動 ── 顧山林惜天時</h4>
+                            <p class="text-xs text-gray-700 font-bold mt-1">路途近多走路或騎單車當作做運動、身體好。</p>
+                        </div>
+                    </div>
+
+                    <!-- Goal 14 -->
+                    <div class="color-soft-green rounded-2xl p-4 border-2 border-green-200 flex items-start gap-3">
+                        <div class="w-12 h-12 bg-blue-600 text-white rounded-xl flex items-center justify-center font-black text-xl shrink-0 shadow-sm">14</div>
+                        <div>
+                            <h4 class="font-extrabold text-base text-blue-950">海洋保育 ── 保護水底魚蝦小水溝</h4>
+                            <p class="text-xs text-gray-700 font-bold mt-1">不將廚餘廢油亂倒進水溝，守護水源乾淨。</p>
+                        </div>
+                    </div>
+
+                    <!-- Goal 15 -->
+                    <div class="color-soft-purple rounded-2xl p-4 border-2 border-purple-200 flex items-start gap-3">
+                        <div class="w-12 h-12 bg-green-600 text-white rounded-xl flex items-center justify-center font-black text-xl shrink-0 shadow-sm">15</div>
+                        <div>
+                            <h4 class="font-extrabold text-base text-green-950">保護陸地 ── 種樹仔毋亂砍顧土地</h4>
+                            <p class="text-xs text-gray-700 font-bold mt-1">保護陸地生態，不隨意使用劇毒農藥、多植栽。</p>
+                        </div>
+                    </div>
+
+                    <!-- Goal 16 -->
+                    <div class="color-soft-purple rounded-2xl p-4 border-2 border-purple-200 flex items-start gap-3">
+                        <div class="w-12 h-12 bg-blue-800 text-white rounded-xl flex items-center justify-center font-black text-xl shrink-0 shadow-sm">16</div>
+                        <div>
+                            <h4 class="font-extrabold text-base text-blue-950">社會和平 ── 講道理、無打架</h4>
+                            <p class="text-xs text-gray-700 font-bold mt-1">鄰里和睦，尊重多元文化，平平安安最幸福。</p>
+                        </div>
+                    </div>
+
+                    <!-- Goal 17 -->
+                    <div class="color-soft-purple rounded-2xl p-4 border-2 border-purple-200 flex items-start gap-3">
+                        <div class="w-12 h-12 bg-emerald-900 text-white rounded-xl flex items-center justify-center font-black text-xl shrink-0 shadow-sm">17</div>
+                        <div>
+                            <h4 class="font-extrabold text-base text-emerald-950">作俠打拼 ── 大家手牽手成大事</h4>
+                            <p class="text-xs text-gray-700 font-bold mt-1">農會家政班、社區據點攜手合作，發揮無限力量！</p>
+                        </div>
+                    </div>
+
+                    <!-- Extra Interactive Encouragement Tile -->
+                    <div class="bg-gradient-to-br from-emerald-600 to-teal-700 rounded-2xl p-4 text-white flex items-center justify-center text-center">
+                        <div>
+                            <p class="font-black text-lg">💡 永續大師就是您！</p>
+                            <p class="text-xs text-white/90 font-bold mt-1">只要將這些好習慣帶回家，您就是頂尖大師！</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 4: STORIES & CORE CASES -->
+        <section id="tab-stories" class="tab-content hidden space-y-6">
+            <!-- Taiwan Drought Icebreaker story -->
+            <div class="bg-white rounded-[2rem] p-6 card-shadow border-t-8 border-cyan-500">
+                <h2 class="text-2xl font-black text-cyan-900 mb-4 flex items-center gap-2">
+                    <span class="w-10 h-10 rounded-full bg-cyan-100 flex items-center justify-center text-cyan-700">
+                        <i class="fa-solid fa-water"></i>
+                    </span>
+                    氣候與水事件：難忘的百年大旱 (台灣 2021)
+                </h2>
+                
+                <div class="flex flex-col md:flex-row gap-6 items-center">
+                    <div class="space-y-3 flex-grow">
+                        <p class="text-sm text-gray-700 font-bold leading-relaxed">
+                            還記得幾年前苗栗和中台灣遭遇了幾十年來最嚴重的乾旱嗎？當時實施「供五停二」限水措施，家家戶戶忙著用水桶接水洗澡、洗菜，連沖馬桶都要省著沖，生活非常不方便。
+                        </p>
+                        <p class="text-sm text-gray-700 font-bold leading-relaxed">
+                            那時農田被迫停灌休耕，老農民站在乾旱到乾癟裂開的田埂邊直流眼淚說：<strong>「一輩子沒見過水庫底長滿草，看了心好痛。」</strong>這不是北極熊的遙遠故事，這是我們切身的痛。
+                        </p>
+                        <div class="bg-cyan-50 border-2 border-cyan-200 rounded-xl p-3 text-xs text-cyan-950 font-black">
+                            🎯 永續動能 ➔ 天時亂了套，水資源沒了。這就是為什麼我們要執行第 6 招「省水資源」和第 13 招「顧山林惜天時」的原因！
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Global & Corporate Action Cases -->
+            <div class="bg-white rounded-[2rem] p-6 card-shadow border-t-8 border-amber-500">
+                <h2 class="text-2xl font-black text-amber-900 mb-4 flex items-center gap-2">
+                    <span class="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-700">
+                        <i class="fa-solid fa-lightbulb"></i>
+                    </span>
+                    原來這就是 SDGs！生活中超有感的政府企業案例
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Convenice Store Case -->
+                    <div class="bg-amber-50/60 rounded-2xl p-5 border border-amber-200">
+                        <h3 class="text-lg font-black text-amber-950 mb-2">🛒 超商貼紙黃昏大作戰 (SDG 12)</h3>
+                        <p class="text-xs text-gray-700 font-bold leading-relaxed">
+                            每天傍晚，超商便當、御飯糰貼上「7折」或「65折」貼紙。這就是「惜食不討債」！不講大道理，用<strong>省錢折扣誘惑</strong>，讓人民一邊拿便宜，一邊幫地球減少幾萬噸廚餘，超棒！
+                        </p>
+                    </div>
+
+                    <!-- Taipower incentive case -->
+                    <div class="bg-amber-50/60 rounded-2xl p-5 border border-amber-200">
+                        <h3 class="text-lg font-black text-amber-950 mb-2">⚡ 電費單上的「省電拿獎金」 (SDG 7)</h3>
+                        <p class="text-xs text-gray-700 font-bold leading-relaxed">
+                            台電推動節電獎勵：只要您家這一期的用電量比去年同期省，<strong>每省1度電，電費直接扣 0.6 元</strong>，每期至少獎勵 84 元。讓省電不僅愛地球，更直接省荷包！
+                        </p>
+                    </div>
+
+                    <!-- TAP Agricultural Barcode -->
+                    <div class="bg-amber-50/60 rounded-2xl p-5 border border-amber-200">
+                        <h3 class="text-lg font-black text-amber-950 mb-2">🏷️ 產銷履歷身世大揭密 (SDG 15)</h3>
+                        <p class="text-xs text-gray-700 font-bold leading-relaxed">
+                            超市蔬菜包裝上的「綠色 TAP 標章」，拿出手機一掃二維條碼，就能清清楚楚看到這個菜是哪個縣市、哪位農夫，在什麼時候種下和採收的。吃得安心，更用行動支持了在地耕作！
+                        </p>
+                    </div>
+
+                    <!-- SDG Mini Interactive Quiz Widget for Elders -->
+                    <div class="bg-emerald-50 rounded-2xl p-5 border-2 border-emerald-300">
+                        <h3 class="text-lg font-black text-emerald-950 mb-2">🎯 互動大挑戰：永續生活連連看</h3>
+                        <p class="text-xs text-gray-600 font-bold mb-3">下列哪個日常習慣可以幫自己拿到台電退還的獎金？</p>
+                        
+                        <div class="space-y-2" id="quiz-options">
+                            <button onclick="checkQuizAnswer(false)" class="w-full bg-white hover:bg-gray-50 border border-gray-300 rounded-xl py-2 px-3 text-xs font-bold text-left transition active:scale-95">A. 忘記關燈吹一整夜冷氣</button>
+                            <button onclick="checkQuizAnswer(true)" class="w-full bg-white hover:bg-gray-50 border border-gray-300 rounded-xl py-2 px-3 text-xs font-bold text-left transition active:scale-95">B. 拔除沒在用的插頭，隨手關燈</button>
+                        </div>
+                        <div id="quiz-feedback" class="mt-3 text-xs font-extrabold hidden"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: RAINY DAY FALLBACK PROGRAMS -->
+        <section id="tab-rain" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-[2rem] p-6 card-shadow border-t-8 border-blue-500">
+                <h2 class="text-2xl font-black text-blue-900 mb-2 flex items-center gap-2">
+                    <span class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700">
+                        <i class="fa-solid fa-cloud-showers-water"></i>
+                    </span>
+                    下雨也不掃興！黃金梯田雨天備案
+                </h2>
+                <p class="text-sm text-gray-600 font-bold mb-6">
+                    如果當天下大雨，無法至草地上採集，老師特別準備了以下在雨棚、遮雨長廊下進行的有趣活動！
+                </p>
+
+                <!-- 3 contingency programs grid -->
+                <div class="space-y-6">
+                    
+                    <!-- Fallback 1 -->
+                    <div class="bg-emerald-50 rounded-2xl p-5 border-2 border-emerald-200 flex flex-col md:flex-row items-center gap-4">
+                        <div class="w-16 h-16 bg-emerald-600 text-white text-3xl rounded-full flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-bottle-droplet"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-black text-emerald-950">備案一：客家傳統發酵智慧 ➔ 萬能鹽麴 DIY</h3>
+                            <p class="text-xs text-gray-700 font-bold leading-relaxed mt-1">
+                                將大自然搬進雨棚！準備在地友善蔬果（小黃瓜、白蘿蔔等），教導大家利用「米麴」和鹽巴醃漬。
+                                配合 <strong class="text-emerald-800">iNaturalist</strong> 拍攝蔬菜，了解每天吃進肚裡作物的身世。「惜食不浪費（毋討債）」，每人還能帶走一罐鹽麴回家做調味料！
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Fallback 2 -->
+                    <div class="bg-sky-50 rounded-2xl p-5 border-2 border-sky-200 flex flex-col md:flex-row items-center gap-4">
+                        <div class="w-16 h-16 bg-sky-600 text-white text-3xl rounded-full flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-black text-sky-950">備案二：遮雨棚下「與雨共生」微觀攝影比賽</h3>
+                            <p class="text-xs text-gray-700 font-bold leading-relaxed mt-1">
+                                不用淋到雨！帶領學員尋找在遮雨棚木柱、屋簷、走廊角落因為躲雨而聚集的微小生物（蝸牛、瓢蟲等），或是雨水打在葉片上的微觀景象。拍完直接上傳鑑定，比一比誰拍的最美麗，在室內舉辦微觀發表會！
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Fallback 3 -->
+                    <div class="bg-amber-50 rounded-2xl p-5 border-2 border-amber-200 flex flex-col md:flex-row items-center gap-4">
+                        <div class="w-16 h-16 bg-amber-500 text-white text-3xl rounded-full flex items-center justify-center shrink-0">
+                            <i class="fa-solid fa-dice"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-black text-amber-950">備案三：永續生活大富翁 ➔ 快問快答搶答賽</h3>
+                            <p class="text-xs text-gray-700 font-bold leading-relaxed mt-1">
+                                下大雨也超熱鬧！利用這份「A4 永續17招口訣」[cite: 1]，長輩分組進行趣味桌遊與搶答賽。「買菜自己帶茄芷袋符合第幾招？」答對的組別可以直接得到銅鑼黃金梯田在地的小農地瓜或當季玉米，在歡笑中把口訣牢牢記在腦海裡！
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 6: ONE-KEY LINE SHARING CREATOR -->
+        <section id="tab-line" class="tab-content hidden space-y-6">
+            <div class="bg-white rounded-[2rem] p-6 card-shadow border-t-8 border-green-500">
+                <h2 class="text-2xl font-black text-green-900 mb-2 flex items-center gap-2">
+                    <span class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-700">
+                        <i class="fa-brands fa-line"></i>
+                    </span>
+                    動動手指 ➔ 一鍵 LINE 分享與複製
+                </h2>
+                <p class="text-sm text-gray-600 font-bold mb-6">
+                    一鍵把在地客語白話永續口訣，傳送到家庭群組或好友聊天室，跟子孫炫耀您今天的永續收穫！[cite: 1]
+                </p>
+
+                <!-- Personalization Field -->
+                <div class="bg-gray-50 border rounded-2xl p-5 space-y-4">
+                    <div>
+                        <label for="learner-name" class="block text-sm font-black text-gray-700 mb-1">請輸入您的名字 (例如: 美秀姐):</label>
+                        <input type="text" id="learner-name" value="樂齡學員" oninput="updateLineMessage()" class="w-full border-2 border-emerald-300 focus:border-emerald-500 rounded-xl px-4 py-2 text-sm font-bold shadow-sm outline-none">
+                    </div>
+
+                    <!-- Message Preview Container -->
+                    <div>
+                        <label class="block text-sm font-black text-gray-700 mb-1">簡訊口訣內容預覽:</label>
+                        <div id="line-message-preview" class="w-full bg-white border border-gray-300 rounded-xl p-4 text-xs font-bold leading-relaxed whitespace-pre-wrap text-gray-800 shadow-inner">
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="flex flex-col md:flex-row gap-4">
+                        <button onclick="copyToClipboard()" class="flex-grow bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 px-6 rounded-full shadow flex items-center justify-center gap-2 transition active:scale-95 text-sm md:text-base">
+                            <i class="fa-regular fa-copy"></i> 複製口訣到剪貼簿
+                        </button>
+                        <button onclick="shareViaLine()" class="flex-grow bg-[#06C755] hover:bg-[#05b04b] text-white font-black py-3 px-6 rounded-full shadow flex items-center justify-center gap-2 transition active:scale-95 text-sm md:text-base">
+                            <i class="fa-brands fa-line"></i> 一鍵開啟 LINE 傳送
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Branding area -->
+    <footer class="bg-emerald-900 text-emerald-100 py-6 px-4 text-center text-xs font-bold border-t-4 border-amber-400">
+        <p>© 2026 苗栗銅鑼 ➔ 咱个生活智慧・大自然觀察家工作坊</p>
+        <p class="mt-1">永續發展 (SDGs) & 公民科學公民大作戰 | 承蒙你，按仔細！🌱</p>
+    </footer>
+
+    <script>
+        // Global variables
+        let currentFontSize = 'normal';
+        let selectedAISuggestion = 1;
+
+        // Custom Font Scaling logic suitable for elders
+        function changeFontSize(size) {
+            const container = document.getElementById('text-container');
+            const normalBtn = document.getElementById('btn-font-normal');
+            const largeBtn = document.getElementById('btn-font-large');
+            const hugeBtn = document.getElementById('btn-font-huge');
+            
+            // Remove border marks
+            normalBtn.className = "bg-emerald-700 hover:bg-emerald-600 font-bold px-3 py-1 rounded text-xs transition active:scale-95";
+            largeBtn.className = "bg-amber-500 hover:bg-amber-400 font-extrabold px-3 py-1 rounded text-sm text-amber-950 transition active:scale-95";
+            hugeBtn.className = "bg-red-500 hover:bg-red-400 font-black px-3 py-1 rounded text-base text-white transition active:scale-95";
+
+            if (size === 'normal') {
+                container.style.fontSize = '1rem';
+                normalBtn.classList.add('border-2', 'border-white');
+            } else if (size === 'large') {
+                container.style.fontSize = '1.25rem';
+                largeBtn.classList.add('border-2', 'border-amber-600');
+            } else if (size === 'huge') {
+                container.style.fontSize = '1.5rem';
+                hugeBtn.classList.add('border-2', 'border-red-700');
+            }
+            currentFontSize = size;
+        }
+
+        // Tab switcher script
+        function switchTab(tabId) {
+            // Hide all tab content
+            const contents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < contents.length; i++) {
+                contents[i].classList.add('hidden');
+                contents[i].classList.remove('block');
+            }
+            // Show requested tab content
+            document.getElementById(tabId).classList.remove('hidden');
+            document.getElementById(tabId).classList.add('block');
+
+            // Reset navigation button borders
+            const buttons = document.getElementsByClassName('tab-button');
+            for (let i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove('border-emerald-600', 'text-emerald-700');
+                buttons[i].classList.add('border-transparent', 'text-gray-500');
+            }
+            // Highlight current nav tab button
+            const activeNavButton = document.getElementById('nav-' + tabId);
+            if (activeNavButton) {
+                activeNavButton.classList.add('border-emerald-600', 'text-emerald-700');
+                activeNavButton.classList.remove('border-transparent', 'text-gray-500');
+            }
+            
+            window.scrollTo({ top: 120, behavior: 'smooth' });
+        }
+
+        // Web Audio Synthesizer (Zero external URL dependencies sound synth)
+        function playSound(type) {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                
+                if (type === 'success') {
+                    // Play a cheerful "ding-ding-ding!" arpeggio chord
+                    const notes = [523.25, 659.25, 783.99, 1046.5]; // C5, E5, G5, C6
+                    notes.forEach((freq, idx) => {
+                        const osc = ctx.createOscillator();
+                        const gain = ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, ctx.currentTime + idx * 0.1);
+                        gain.gain.setValueAtTime(0.3, ctx.currentTime + idx * 0.1);
+                        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + idx * 0.1 + 0.4);
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.start(ctx.currentTime + idx * 0.1);
+                        osc.stop(ctx.currentTime + idx * 0.1 + 0.5);
+                    });
+                } else if (type === 'click') {
+                    // Quick soft click chirp sound
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(800, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(300, ctx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.1);
+                } else if (type === 'wrong') {
+                    // Soft low beep for re-tries
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                }
+            } catch (e) {
+                console.log("Audio not supported yet.");
+            }
+        }
+
+        // CONFETTI CELEBRATIONS LOGIC FOR IMAGES EXPLOITS
+        let confettiActive = false;
+        let confettiArray = [];
+        const canvas = document.getElementById('confetti-canvas');
+        const canvasCtx = canvas.getContext('2d');
+
+        function triggerConfetti() {
+            confettiActive = true;
+            confettiArray = [];
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            for (let i = 0; i < 150; i++) {
+                confettiArray.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    r: Math.random() * 6 + 4,
+                    d: Math.random() * canvas.height,
+                    color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+                    tilt: Math.random() * 10 - 5,
+                    tiltAngleIncremental: Math.random() * 0.07 + 0.02,
+                    tiltAngle: 0
+                });
+            }
+            animateConfetti();
+            setTimeout(() => { confettiActive = false; }, 3500);
+        }
+
+        function animateConfetti() {
+            if (!confettiActive) {
+                canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+                return;
+            }
+            canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            confettiArray.forEach((p, idx) => {
+                p.tiltAngle += p.tiltAngleIncremental;
+                p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
+                p.x += Math.sin(p.tiltAngle);
+                p.tilt = Math.sin(p.tiltAngle - idx / 3) * 15;
+
+                canvasCtx.beginPath();
+                canvasCtx.lineWidth = p.r;
+                canvasCtx.strokeStyle = p.color;
+                canvasCtx.moveTo(p.x + p.tilt + p.r / 2, p.y);
+                canvasCtx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
+                canvasCtx.stroke();
+            });
+
+            requestAnimationFrame(animateConfetti);
+        }
+
+        // iNaturalist Simulator Engine Logic
+        let simCurrentStep = 1;
+
+        function simAction(action) {
+            playSound('click');
+            
+            if (action === 'plus' && simCurrentStep === 1) {
+                // Switch screen and step highlights
+                document.getElementById('sim-screen-1').classList.add('hidden');
+                document.getElementById('sim-screen-2').classList.remove('hidden');
+                document.getElementById('sim-btn-plus').classList.add('hidden');
+                document.getElementById('sim-btn-camera').classList.remove('hidden');
+
+                document.getElementById('sim-step-box-1').className = "bg-white/5 rounded-xl p-3 border border-transparent transition";
+                document.getElementById('sim-step-box-2').className = "bg-white/10 rounded-xl p-3 border-2 border-sky-500 transition";
+                simCurrentStep = 2;
+            } else if (action === 'camera' && simCurrentStep === 2) {
+                document.getElementById('sim-screen-2').classList.add('hidden');
+                document.getElementById('sim-screen-3').classList.remove('hidden');
+                document.getElementById('sim-btn-camera').classList.add('hidden');
+                document.getElementById('sim-btn-guess').classList.remove('hidden');
+
+                document.getElementById('sim-step-box-2').className = "bg-white/5 rounded-xl p-3 border border-transparent transition";
+                document.getElementById('sim-step-box-3').className = "bg-white/10 rounded-xl p-3 border-2 border-amber-500 transition";
+                simCurrentStep = 3;
+            } else if (action === 'guess' && simCurrentStep === 3) {
+                document.getElementById('sim-btn-guess').classList.add('hidden');
+                document.getElementById('sim-btn-check').classList.remove('hidden');
+
+                document.getElementById('sim-step-box-3').className = "bg-white/5 rounded-xl p-3 border border-transparent transition";
+                document.getElementById('sim-step-box-4').className = "bg-white/10 rounded-xl p-3 border-2 border-red-500 transition";
+                simCurrentStep = 4;
+            } else if (action === 'check' && simCurrentStep === 4) {
+                if (selectedAISuggestion === 1) {
+                    playSound('success');
+                    triggerConfetti();
+                    document.getElementById('sim-screen-3').classList.add('hidden');
+                    document.getElementById('sim-screen-4').classList.remove('hidden');
+                    document.getElementById('sim-btn-check').classList.add('hidden');
+                } else {
+                    playSound('wrong');
+                    alert('提示：請先選取「芳香萬壽菊」以完成辨識！');
+                }
+            }
+        }
+
+        function selectSuggestion(num) {
+            playSound('click');
+            selectedAISuggestion = num;
+            if (num === 1) {
+                document.getElementById('suggest-item-1').className = "bg-white border-2 border-emerald-500 rounded-xl p-2.5 flex items-center justify-between cursor-pointer transition";
+                document.getElementById('suggest-item-2').className = "bg-white border-2 border-transparent rounded-xl p-2.5 flex items-center justify-between cursor-pointer transition";
+                document.getElementById('suggest-check-1').innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
+                document.getElementById('suggest-check-2').innerHTML = `<i class="fa-regular fa-circle"></i>`;
+            } else {
+                document.getElementById('suggest-item-1').className = "bg-white border-2 border-transparent rounded-xl p-2.5 flex items-center justify-between cursor-pointer transition";
+                document.getElementById('suggest-item-2').className = "bg-white border-2 border-emerald-500 rounded-xl p-2.5 flex items-center justify-between cursor-pointer transition";
+                document.getElementById('suggest-check-1').innerHTML = `<i class="fa-regular fa-circle"></i>`;
+                document.getElementById('suggest-check-2').innerHTML = `<i class="fa-solid fa-circle-check"></i>`;
+            }
+        }
+
+        function resetSimulator() {
+            playSound('click');
+            simCurrentStep = 1;
+            selectedAISuggestion = 1;
+            
+            document.getElementById('sim-screen-4').classList.add('hidden');
+            document.getElementById('sim-screen-1').classList.remove('hidden');
+            document.getElementById('sim-btn-plus').classList.remove('hidden');
+            document.getElementById('sim-btn-camera').classList.add('hidden');
+            document.getElementById('sim-btn-guess').classList.add('hidden');
+            document.getElementById('sim-btn-check').classList.add('hidden');
+
+            document.getElementById('sim-step-box-1').className = "bg-white/10 rounded-xl p-3 border-2 border-emerald-500 transition";
+            document.getElementById('sim-step-box-2').className = "bg-white/5 rounded-xl p-3 border border-transparent transition";
+            document.getElementById('sim-step-box-3').className = "bg-white/5 rounded-xl p-3 border border-transparent transition";
+            document.getElementById('sim-step-box-4').className = "bg-white/5 rounded-xl p-3 border border-transparent transition";
+
+            selectSuggestion(1);
+        }
+
+        // SDG Quiz handler
+        function checkQuizAnswer(isCorrect) {
+            const feedback = document.getElementById('quiz-feedback');
+            feedback.classList.remove('hidden');
+            if (isCorrect) {
+                playSound('success');
+                feedback.className = "mt-3 text-sm font-black text-emerald-700 bg-emerald-50 p-3 rounded-xl border-2 border-emerald-300";
+                feedback.innerHTML = "🎉 答對了！您真是永續生活大師！節省不必要的用電還能直接抵扣電費，省錢省水又愛地球！";
+            } else {
+                playSound('wrong');
+                feedback.className = "mt-3 text-sm font-black text-red-700 bg-red-50 p-3 rounded-xl border-2 border-red-300";
+                feedback.innerHTML = "❌ 答錯了喔！天公伯在看！不拔插頭會流失待機電力，快想想另一個日常好習慣。";
+            }
+        }
+
+        // Dynamic Hakka LINE Message Updates
+        function updateLineMessage() {
+            const name = document.getElementById('learner-name').value || '樂齡學員';
+            const preview = document.getElementById('line-message-preview');
+            
+            const text = `【大家共倈打拼：永續17招】🌱
+
+我是「${name}」！今天在黃金梯田露營區上課，學會了國際最新的永續17招生活好習慣！原來我們平常做的事就是大師：
+
+🛒 1. 愛惜物仔：買菜自備「茄芷袋」，惜食不浪費 (第12招)
+🏃‍♂️ 2. 顧身體：天天來據點運動、拉筋、聊家常 (第3招)
+🏠 3. 顧家裡：淘米洗菜水澆花，隨手關燈拔插頭 (第6、7招)
+
+動動手指分享出去，大家一條心，庄頭安居又快樂！承蒙你，按仔細！🙏💚`;
+
+            preview.textContent = text;
+        }
+
+        // Copy mechanism with reliable legacy fallback
+        function copyToClipboard() {
+            const name = document.getElementById('learner-name').value || '樂齡學員';
+            const text = `【大家共倈打拼：永續17招】🌱\n\n我是「${name}」！今天在黃金梯田露營區上課，學會了國際最新的永續17招生活好習慣！原來我們平常做的事就是大師：\n\n🛒 1. 愛惜物仔：買菜自備「茄芷袋」，惜食不浪費 (第12招)\n🏃‍♂️ 2. 顧身體：天天來據點運動、拉筋、聊家常 (第3招)\n🏠 3. 顧家裡：淘米洗菜水澆花，隨手關燈拔插頭 (第6、7招)\n\n動動手指分享出去，大家一條心，庄頭安居又快樂！承蒙你，按仔細！🙏💚`;
+
+            // Standard executive command for maximum support inside older devices / iframes
+            const dummy = document.createElement("textarea");
+            document.body.appendChild(dummy);
+            dummy.value = text;
+            dummy.select();
+            document.execCommand("copy");
+            document.body.removeChild(dummy);
+
+            playSound('success');
+            alert('複製成功！現在可以去 LINE 聊天室「長按」貼上傳給親朋好友囉！');
+        }
+
+        // Redirect directly to Line Client
+        function shareViaLine() {
+            const name = document.getElementById('learner-name').value || '樂齡學員';
+            const text = `【大家共倈打拼：永續17招】🌱\n\n我是「${name}」！今天在黃金梯田露營區上課，學會了國際最新的永續17招生活好習慣！原來我們平常做的事就是大師：\n\n🛒 1. 愛惜物仔：買菜自備「茄芷袋」，惜食不浪費 (第12招)\n🏃‍♂️ 2. 顧身體：天天來據點運動、拉筋、聊家常 (第3招)\n🏠 3. 顧家裡：淘米洗菜水澆花，隨手關燈拔插頭 (第6、7招)\n\n動動手指分享出去，大家一條心，庄頭安居又快樂！承蒙你，按仔細！🙏💚`;
+
+            const url = "https://line.me/R/msg/text/?" + encodeURIComponent(text);
+            window.open(url, '_blank');
+        }
+
+        // Run initialization routines
+        window.onload = function () {
+            updateLineMessage();
+        };
+    </script>
+
+</body>
+</html>
