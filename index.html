@@ -645,42 +645,46 @@
 
         <!-- TAB 5: RAINY DAY FALLBACK PROGRAMS -->
         <section id="tab-rain" class="tab-content hidden space-y-6">
-            <div class="bg-white rounded-[2rem] p-6 card-shadow border-t-8 border-blue-500">
-                <h2 class="text-2xl font-black text-blue-900 mb-2 flex items-center gap-2">
-                    <span class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700">
-                        <i class="fa-solid fa-cloud-showers-water"></i>
-                    </span>
-                    SDGs 永續潮流冒險地圖
-                </h2>
-                <div class="space-y-6">
-                 <div class="flex flex-col items-center p-4 bg-white rounded-2xl shadow-md w-64 mx-auto">
-                  <img src="qrcode.png" alt="QR Code" class="w-48 h-48 object-contain">
-                  <p class="text-sm font-bold text-gray-600 mt-2">手機掃描立即分享</p>
-                    <a href="https://share.gemini.google/SnT2BcrMouIZ" target="_blank" class="text-blue-500 underline">
-</a>
-                </div>
-                       
-                    </div>
- <section id="tab-rain" class="tab-content hidden space-y-6">
-            <div class="bg-white rounded-[2rem] p-6 card-shadow border-t-8 border-blue-500">
-                <h2 class="text-2xl font-black text-blue-900 mb-2 flex items-center gap-2">
-                    <span class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700">
-                        <i class="fa-solid fa-cloud-showers-water"></i>
-                    </span>
-                    SDG 永續極限冒險：AI 智慧大考驗
-                </h2>
-                <div class="space-y-6">
-                 <div class="flex flex-col items-center p-4 bg-white rounded-2xl shadow-md w-64 mx-auto">
-                  <img src="QR2.png" alt="QR Code" class="w-48 h-48 object-contain">
-                  <p class="text-sm font-bold text-gray-600 mt-2">手機掃描立即分享</p>
-                    <a href="https://share.gemini.google/faW83CJBnwUy" target="_blank" class="text-blue-500 underline">
-</a>
-                </div>
-                       
-                    </div>
+            <div style="max-width: 800px; margin: 40px auto; padding: 0 20px; font-family: system-ui, -apple-system, sans-serif;">
+    
+    <h2 style="text-align: center; color: #1a202c; margin-bottom: 30px; font-size: 1.5rem; font-weight: bold;">
+        快速掃描與連結導覽
+    </h2>
 
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+        
+        <div style="background: #ffffff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid #edf2f7; padding: 24px; text-align: center; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <h3 style="color: #2d3748; margin-top: 0; margin-bottom: 16px; font-size: 1.1rem; font-weight: 600;">
+                    🌿 👾 SDGs 永續潮流生存冒險
+                </h3>
+                <div style="margin-bottom: 20px;">
+                    <img src="qrcode.png" alt="生存冒險 QR Code" style="width: 160px; height: 160px; border: 1px solid #e2e8f0; padding: 6px; border-radius: 8px; background: #fff;">
+                    <p style="color: #718096; font-size: 0.8rem; margin-top: 6px;">手機掃描直接閱讀</p>
                 </div>
             </div>
+            <a href="https://share.gemini.google/ZgNgAUu1BXY3" style="display: block; padding: 12px; background-color: #2b6cb0; color: white; text-decoration: none; border-radius: 8px; font-weight: 500; font-size: 0.95rem; transition: background 0.2s;">
+                🌐 點我直接進入網頁
+            </a>
+        </div>
+
+        <div style="background: #ffffff; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid #edf2f7; padding: 24px; text-align: center; display: flex; flex-direction: column; justify-content: space-between;">
+            <div>
+                <h3 style="color: #2d3748; margin-top: 0; margin-bottom: 16px; font-size: 1.1rem; font-weight: 600;">
+                    📍 翻玩永續日常
+                </h3>
+                <div style="margin-bottom: 20px;">
+                    <img src="QR2.png" alt="翻玩永續日常 QR Code" style="width: 160px; height: 160px; border: 1px solid #e2e8f0; padding: 6px; border-radius: 8px; background: #fff;">
+                    <p style="color: #718096; font-size: 0.8rem; margin-top: 6px;">手機掃描直接閱讀</p>
+                </div>
+            </div>
+            <a href="https://share.gemini.google/RhJ3ydNrlYlk" target="_blank" style="display: block; padding: 12px; background-color: #319795; color: white; text-decoration: none; border-radius: 8px; font-weight: 500; font-size: 0.95rem; transition: background 0.2s;">
+                📂 點我瀏覽參考資料
+            </a>
+        </div>
+
+    </div>
+</div>
         </section>
 
         <!-- TAB 6: ONE-KEY LINE SHARING CREATOR -->
@@ -700,7 +704,7 @@
                 <div class="bg-gray-50 border rounded-2xl p-5 space-y-4">
                     <div>
                         <label for="learner-name" class="block text-sm font-black text-gray-700 mb-1">請輸入您的名字 (例如: 美秀姐):</label>
-                        <input type="text" id="learner-name" value="樂齡學員" oninput="updateLineMessage()" class="w-full border-2 border-emerald-300 focus:border-emerald-500 rounded-xl px-4 py-2 text-sm font-bold shadow-sm outline-none">
+                        <input type="text" id="learner-name" value="學員" oninput="updateLineMessage()" class="w-full border-2 border-emerald-300 focus:border-emerald-500 rounded-xl px-4 py-2 text-sm font-bold shadow-sm outline-none">
                     </div>
 
                     <!-- Message Preview Container -->
@@ -1011,7 +1015,7 @@
 
         // Copy mechanism with reliable legacy fallback
         function copyToClipboard() {
-            const name = document.getElementById('learner-name').value || '樂齡學員';
+            const name = document.getElementById('learner-name').value || '學員';
             const text = `【大家共下打拼：永續17招】🌱\n\n我是「${name}」！今天在黃金梯田露營區上課，學會了國際最新的永續17招生活好習慣！原來我們平常做的事就是大師：\n\n🛒 1. 愛惜物仔：買菜自備「茄芷袋」，惜食不浪費 (第12招)\n🏃‍♂️ 2. 顧身體：天天來據點運動、拉筋、聊家常 (第3招)\n🏠 3. 顧家裡：淘米洗菜水澆花，隨手關燈拔插頭 (第6、7招)\n\n動動手指分享出去，大家一條心，庄頭安居又快樂！承蒙你，按仔細！🙏💚`;
 
             // Standard executive command for maximum support inside older devices / iframes
@@ -1028,7 +1032,7 @@
 
         // Redirect directly to Line Client
         function shareViaLine() {
-            const name = document.getElementById('learner-name').value || '樂齡學員';
+            const name = document.getElementById('learner-name').value || '學員';
             const text = `【大家共下打拼：永續17招】🌱\n\n我是「${name}」！今天在黃金梯田露營區上課，學會了國際最新的永續17招生活好習慣！原來我們平常做的事就是大師：\n\n🛒 1. 愛惜物仔：買菜自備「茄芷袋」，惜食不浪費 (第12招)\n🏃‍♂️ 2. 顧身體：天天來據點運動、拉筋、聊家常 (第3招)\n🏠 3. 顧家裡：淘米洗菜水澆花，隨手關燈拔插頭 (第6、7招)\n\n動動手指分享出去，大家一條心，庄頭安居又快樂！承蒙你，按仔細！🙏💚`;
 
             const url = "https://line.me/R/msg/text/?" + encodeURIComponent(text);
