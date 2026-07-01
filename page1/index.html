@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SDGs 永續日常潮流大冒險</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #0b0f19; /* 極深藍黑賽博太空底色 */
+            background-image: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #090514 100%);
+        }
+        .pixel-font {
+            font-family: 'Press Start 2P', 'Noto Sans TC', sans-serif;
+        }
+        /* 霓虹發光邊框特效 */
+        .neon-glow-emerald {
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        }
+        .neon-glow-purple {
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between text-gray-100 overflow-x-hidden">
+
+    <!-- 頂部霓虹標題列 -->
+    <header class="border-b-4 border-emerald-500 bg-black/80 py-6 px-4 text-center shadow-2xl relative flex-shrink-0">
+        <div class="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-purple-500 via-pink-500 to-emerald-500"></div>
+        <span class="pixel-font text-emerald-400 text-xs md:text-sm tracking-widest block mb-1">LEVEL UP YOUR PLANET</span>
+        <h1 class="text-3xl md:text-5xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-indigo-400 drop-shadow">
+            👾 SDGs 永續潮流生存冒險
+        </h1>
+        <p class="text-xs md:text-sm font-bold mt-2 text-purple-300">
+            Z 世代生存大挑戰：用你的永續意識，打通 17 關地圖吧！
+        </p>
+    </header>
+
+    <!-- 戰力狀態看板 (計時、進度、音效) -->
+    <section class="max-w-md mx-auto w-full px-4 mt-4 flex-shrink-0">
+        <div class="bg-gray-900/90 rounded-2xl shadow-xl p-4 border-2 border-purple-500 grid grid-cols-3 gap-2 text-center neon-glow-purple">
+            <div class="bg-purple-950/40 p-2 rounded-xl border border-purple-900/50">
+                <span class="block text-purple-400 font-bold text-xs">解鎖進度</span>
+                <span id="progress-text" class="text-xl md:text-2xl font-black text-emerald-400">1 / 17</span>
+            </div>
+            <div class="bg-indigo-950/40 p-2 rounded-xl border border-indigo-900/50">
+                <span class="block text-indigo-400 font-bold text-xs">⏱️ 冒險時間</span>
+                <span id="timer-text" class="text-xl md:text-2xl font-black text-yellow-400">00:00</span>
+            </div>
+            <div class="bg-emerald-950/40 p-2 rounded-xl border border-emerald-900/50">
+                <button id="sound-toggle" class="w-full h-full flex flex-col items-center justify-center focus:outline-none">
+                    <span id="sound-icon" class="text-lg">🔊</span>
+                    <span id="sound-text" class="text-xs font-bold text-emerald-400">音效：開</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- 闖關步道 RPG 地圖 -->
+    <main class="max-w-md mx-auto w-full px-4 py-6 flex-grow">
+        <!-- 說明橫幅 -->
+        <div class="bg-purple-950/80 border-2 border-purple-500 rounded-2xl p-3 mb-6 text-center text-sm font-bold text-purple-200 shadow-lg animate-pulse">
+            🛸 點擊下方閃爍的「冒險關卡」開啟劇情！
+        </div>
+
+        <!-- 蜿蜒地圖容器 -->
+        <div class="bg-gray-950/90 rounded-3xl p-6 border-4 border-emerald-500 relative overflow-hidden shadow-[0_0_25px_rgba(16,185,129,0.2)]">
+            <!-- 賽博龐克背景小裝飾 -->
+            <div class="absolute -top-10 -left-10 text-9xl opacity-5 pointer-events-none">👾</div>
+            <div class="absolute -bottom-10 -right-10 text-9xl opacity-5 pointer-events-none">🚀</div>
+            
+            <!-- S型 S-Curve 蜿蜒地圖 -->
+            <div id="map-grid" class="grid grid-cols-3 gap-y-12 gap-x-4 relative">
+                <!-- 由 JavaScript 動態生成 17 個電玩棋子 -->
+            </div>
+        </div>
+
+        <!-- 底部重置按鈕 -->
+        <div class="text-center mt-6">
+            <button id="reset-game-btn" class="bg-red-950 hover:bg-red-900 text-red-300 font-bold py-3 px-8 rounded-2xl text-sm shadow border border-red-800 transition-all active:scale-95">
+                💀 刪除角色，重新冒險
+            </button>
+        </div>
+    </main>
+
+    <!-- 頁尾 -->
+    <footer class="bg-black text-gray-500 text-center py-4 text-xs font-bold mt-6 border-t-2 border-purple-900 flex-shrink-0">
+        GAME OVER IS NOT AN OPTION. SAVE THE PLANET.
+    </footer>
+
+    <!-- 闖關挑戰彈出視窗 (高度與滾動完全修復) -->
+    <div id="challenge-modal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-3 hidden">
+        <div class="bg-gray-900 rounded-3xl max-w-sm w-full max-h-[85vh] flex flex-col shadow-[0_0_35px_rgba(168,85,247,0.5)] border-4 border-purple-500 overflow-hidden transform scale-95 transition-all duration-300">
+            <!-- 關卡頂部標題 -->
+            <div id="modal-header" class="p-4 text-center text-white relative flex-shrink-0 bg-purple-900 border-b-2 border-purple-500">
+                <button id="modal-close" class="absolute top-3 right-3 text-purple-300 hover:text-white text-2xl font-bold focus:outline-none">&times;</button>
+                <div id="modal-level-num" class="text-xs pixel-font text-yellow-400 mb-0.5">STAGE 1</div>
+                <div id="modal-sdgs-title" class="text-xl md:text-2xl font-black mb-1">目標名稱</div>
+                <div id="modal-sdgs-emoji" class="text-4xl">🔮</div>
+            </div>
+            
+            <!-- 關卡滾動內容區 -->
+            <div id="modal-body" class="p-4 overflow-y-auto flex-grow space-y-4">
+                <!-- 題目情境 -->
+                <div class="bg-gray-950 p-3.5 rounded-2xl border border-purple-900">
+                    <span class="inline-block bg-purple-900 text-purple-200 font-black px-3 py-0.5 rounded-full text-xs mb-1.5">生存抉擇：</span>
+                    <p id="modal-question" class="text-base md:text-lg font-bold text-gray-200 leading-snug">
+                        載入問題中...
+                    </p>
+                </div>
+
+                <!-- 兩個 Z 世代選擇按鈕 -->
+                <div class="grid grid-cols-1 gap-2.5" id="options-container">
+                    <button id="opt-a" class="w-full text-left bg-gray-800/80 hover:bg-purple-950/40 active:scale-98 p-3.5 rounded-2xl border-2 border-purple-900 text-sm md:text-base font-bold text-gray-100 transition-all flex items-center gap-3">
+                        <span class="bg-purple-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-black flex-shrink-0">A</span>
+                        <span id="opt-a-text">選項 A...</span>
+                    </button>
+                    <button id="opt-b" class="w-full text-left bg-gray-800/80 hover:bg-purple-950/40 active:scale-98 p-3.5 rounded-2xl border-2 border-purple-900 text-sm md:text-base font-bold text-gray-100 transition-all flex items-center gap-3">
+                        <span class="bg-purple-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-black flex-shrink-0">B</span>
+                        <span id="opt-b-text">選項 B...</span>
+                    </button>
+                </div>
+
+                <!-- 答對後顯示的潮流生存指南 -->
+                <div id="guide-box" class="bg-emerald-950/60 p-3.5 rounded-2xl border-2 border-emerald-500 hidden shadow-[inset_0_0_10px_rgba(16,185,129,0.2)]">
+                    <span class="inline-block bg-emerald-600 text-white font-black px-3 py-0.5 rounded-full text-xs mb-2">💡 潮流永續生存秘笈：</span>
+                    <p id="modal-action-guide" class="text-sm md:text-base font-black text-gray-200 leading-relaxed">
+                        指南載入中...
+                    </p>
+                </div>
+
+                <!-- 前往下一關按鈕 -->
+                <button id="next-stage-btn" class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-black py-3.5 rounded-2xl text-lg shadow-lg transition-transform hidden animate-pulse">
+                    解鎖成功！繼續前進 🛸
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 自製安全確認視窗 (取代傳統 confirm，防死機) -->
+    <div id="confirm-modal" class="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4 hidden">
+        <div class="bg-gray-900 rounded-2xl max-w-xs w-full p-6 text-center border-2 border-red-500 shadow-2xl">
+            <div class="text-5xl mb-2">⚠️</div>
+            <h3 class="text-lg font-black text-red-400 mb-2">確定要刪除角色？</h3>
+            <p class="text-sm text-gray-400 mb-6">這將會清除您所有的關卡解鎖進度，以及目前的冒險計時，必須重新開始！</p>
+            <div class="flex gap-2">
+                <button id="confirm-yes" class="flex-1 bg-red-600 hover:bg-red-700 text-white font-black py-2 rounded-xl text-sm transition-transform active:scale-95">
+                    確定重來
+                </button>
+                <button id="confirm-no" class="flex-1 bg-gray-700 hover:bg-gray-600 text-gray-200 font-black py-2 rounded-xl text-sm transition-transform active:scale-95">
+                    取消
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 終點通關歡慶視窗 -->
+    <div id="victory-modal" class="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-gradient-to-br from-gray-900 via-indigo-950 to-purple-950 rounded-3xl max-w-sm w-full p-6 md:p-8 text-center shadow-[0_0_50px_rgba(16,185,129,0.5)] border-4 border-emerald-400">
+            <div class="text-7xl mb-4 animate-bounce">🏆🌟👾</div>
+            <h2 class="text-2xl md:text-3xl font-black text-emerald-400 pixel-font">CONGRATULATIONS!</h2>
+            <p class="text-xl font-bold text-white mt-1">您已通關地球永續大師！</p>
+            
+            <div class="bg-black/60 p-4 rounded-2xl my-4 border border-purple-500 shadow-inner">
+                <p class="text-sm text-gray-400 font-bold">你的冒險戰績：</p>
+                <p class="text-xl md:text-2xl font-black text-yellow-400 mt-1">
+                    ⏱️ 總時間：<span id="victory-time">0分0秒</span>
+                </p>
+                <p class="text-xs font-bold text-purple-300 mt-1">
+                    ⭐ 17 項 Z 世代生存祕笈全部入袋！
+                </p>
+            </div>
+
+            <p class="text-xs md:text-sm text-gray-300 font-bold mb-6 leading-relaxed">
+                你已經解鎖了所有永續潮流撇步！快把這個生存地圖發到 Threads、IG 炫耀你的永續智商吧！
+            </p>
+            
+            <button id="victory-replay-btn" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-black py-4 rounded-2xl text-lg shadow-lg transition-transform active:scale-95">
+                重新挑戰，洗出最速傳奇！ ⚡
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 17個全新的潮流化問答、選項與 Z 世代生存實踐指南
+        const sdgsAdventureData = {
+            1: {
+                title: "終結貧窮",
+                emoji: "🛍️🔄",
+                color: "bg-red-600",
+                question: "想跟上最新潮流又怕買衣服買到吃土？想退燒清空間，一堆九成新的衣服包包該怎麼打理？",
+                options: {
+                    A: "上傳至 旋轉拍賣/蝦皮 拍二手，或找古著店寄賣，讓好東西流動",
+                    B: "整箱打包半夜拿去偷丟垃圾車，懶得拍照和包裝寄送"
+                },
+                correct: "A",
+                action: "二手拍賣不只幫你回血，還能延長衣服壽命，拒絕快時尚垃圾！"
+            },
+            2: {
+                title: "消除飢餓",
+                emoji: "🍔📉",
+                color: "bg-amber-600",
+                question: "半夜跟朋友打電玩，外送宵夜不小心點太多，吃到一半飽到快吐，還剩下一大盒鹽酥雞：",
+                options: {
+                    A: "先放冰箱，明天用氣炸鍋熱一下當下午茶，完全不浪費",
+                    B: "嫌麻煩直接整盒丟進垃圾桶，明天再點新鮮的就好"
+                },
+                correct: "A",
+                action: "點多少吃多少，剩菜變身氣炸料理，省錢又減少全球 8% 剩食碳排放！"
+            },
+            3: {
+                title: "健康與福祉",
+                emoji: "📱🧘",
+                color: "bg-emerald-600",
+                question: "深夜兩點躺在床上，還在 Threads、Dcard 瘋狂刷脆文，感覺越看越焦慮焦躁，該怎麼自救？",
+                options: {
+                    A: "手動開啟「睡眠專注模式」，來一場遠離螢幕的數位排毒",
+                    B: "繼續跟鍵盤酸民戰到天亮，用憤怒擊敗焦慮"
+                },
+                correct: "A",
+                action: "適度數位排毒是現代人保護心理健康的必備儀式感，睡好覺身體才會好！"
+            },
+            4: {
+                title: "優質教育",
+                emoji: "🤖💡",
+                color: "bg-red-700",
+                question: "要交一份通識報告，你決定怎麼利用現在最厲害的 ChatGPT、AI 工具？",
+                options: {
+                    A: "利用 AI 幫忙規劃大綱、腦力激盪，並自行查證、消化寫出觀點",
+                    B: "直接叫 AI 寫完，一字不改直接複製貼上送出"
+                },
+                correct: "A",
+                action: "AI 是超棒的知識加速器，但唯有加入你自己的獨立思考，才算真正的學習！"
+            },
+            5: {
+                title: "性別平等",
+                emoji: "🎮🔥",
+                color: "bg-orange-600",
+                question: "在打英雄聯盟等線上電玩時，隊友一聽到麥克風是女生的聲音，就開始開性別玩笑或嘲諷：",
+                options: {
+                    A: "立刻檢舉與靜音對方，在語音群裡明確表態拒絕性別偏見",
+                    B: "加入嘲諷，認為女生本來就不會打電玩、不要來拖累大家"
+                },
+                correct: "A",
+                action: "電玩實力看技術不看性別！拒絕並杜絕網路性別霸凌，打造更友善的玩家圈！"
+            },
+            6: {
+                title: "淨水與衛生",
+                emoji: "🧼🧴",
+                color: "bg-sky-400",
+                question: "想挑選洗臉或洗頭產品，看到主打「強力去角質塑膠微粒」跟「天然洗髮餅」，你怎麼選？",
+                options: {
+                    A: "挑選固體洗髮餅、或不含塑膠微粒的洗劑，減少瓶罐與微塑料危害",
+                    B: "堅持買含塑膠微粒的，覺得磨砂感很酷，流進大海與我無關"
+                },
+                correct: "A",
+                action: "塑膠微粒會透過食物鏈回到你我的餐盤上，選擇天然無瓶罐成分洗劑，洗得帥氣又安全！"
+            },
+            7: {
+                title: "可負擔能源",
+                emoji: "🔌💻",
+                color: "bg-yellow-500",
+                question: "在外租屋電費貴桑桑，為了省電，電競主機、雙螢幕和除濕機不用時該怎麼辦？",
+                options: {
+                    A: "插在有「獨立獨立開關」的延長線上，不使用時一鍵切掉待機電源",
+                    B: "全部二十四小時插著、亮著呼吸燈，反正這樣房間看起來比較科技感"
+                },
+                correct: "A",
+                action: "關閉待機電器每年默默幫你省下大筆電費，也是最簡單的日常節能行動！"
+            },
+            8: {
+                title: "體面工作與經濟",
+                emoji: "💼❌",
+                color: "bg-red-800",
+                question: "去面試一份非常有名的潮流新創公司實習，對方卻說「我們實習不給薪，是給你學習機會」：",
+                options: {
+                    A: "禮貌拒絕對方，並向學校或勞動局反映，拒絕支持無薪血汗實習",
+                    B: "覺得能進名店實習是自己的福氣，心甘情願給對方免費壓榨半年"
+                },
+                correct: "A",
+                action: "合法的報酬是基本人權！勇敢向不對等的實習條件說不，才能建立更公平的勞動市場！"
+            },
+            9: {
+                title: "工業創新與基礎",
+                emoji: "🛵⚡",
+                color: "bg-orange-500",
+                question: "在市區要到 3 公里外的一間網美咖啡店聚會，最潮也最環保的移動方式是？",
+                options: {
+                    A: "搭乘捷運、或用共享機車（如 GoShare, WeMo）轉乘，方便環保",
+                    B: "自己開大排氣量的柴油二手老車去，即使沿路排放黑煙也很帥"
+                },
+                correct: "A",
+                action: "利用共享載具與低碳大眾運輸，不只不用搶車位，還能大減碳，這就是綠色科技生活！"
+            },
+            10: {
+                title: "減少不平等",
+                emoji: "🏳️‍🌈📣",
+                color: "bg-pink-600",
+                question: "看見喜歡的少數族群或 LGBTQ+ 創作者在 YouTube 影片下被大批偏激網友惡意洗版留言：",
+                options: {
+                    A: "幫影片點讚、留下支持的鼓勵話語，幫忙檢舉惡意騷擾留言",
+                    B: "跟著點讚酸民留言，覺得網路上反正大家都在開玩笑，無所謂"
+                },
+                correct: "A",
+                action: "你的每一次點讚與良善發言，都是在支持多元價值的發聲，拒絕讓網路成為偏見的溫床！"
+            },
+            11: {
+                title: "永續城鄉",
+                emoji: "☕🚲",
+                color: "bg-amber-500",
+                question: "週末放假想去喝下午茶、買小配件，你傾向去哪裡消費？",
+                options: {
+                    A: "支持巷口、在地青年創業的獨立咖啡店或手作工坊，繁榮在地經濟",
+                    B: "只去國外連鎖超大購物中心或跨國電商爆買，不管在地商家生死"
+                },
+                correct: "A",
+                action: "多支持在地的獨立小店與文化，能留住社區的靈魂與特色，創造更溫暖的城鄉脈絡！"
+            },
+            12: {
+                title: "責任消費與生產",
+                emoji: "👗🏷️",
+                color: "bg-yellow-600",
+                question: "突然被邀請去參加一場「復古迪斯可主題派對」，你急需一件亮片喇叭褲：",
+                options: {
+                    A: "去古著二手店挖寶、或上網租借，甚至跟朋友借，用完就歸還",
+                    B: "在超便宜快時尚平台（如 SHEIN）爆買一件，穿這一次就丟掉"
+                },
+                correct: "A",
+                action: "租借、共享或購買二手古著不僅衣服更有故事、不撞衫，更能狠狠打擊快時尚造成的驚人廢棄物！"
+            },
+            13: {
+                title: "氣候行動",
+                emoji: "🥛☕",
+                color: "bg-green-700",
+                question: "去連鎖咖啡店點拿鐵，看到菜單有提供「植物奶/燕麥奶」選項：",
+                options: {
+                    A: "偶爾挑戰看看燕麥奶！因為燕麥奶產生的碳排放比一般牛奶低很多",
+                    B: "完全不考慮，覺得點燕麥奶不夠主流，堅持喝一般牛奶"
+                },
+                correct: "A",
+                action: "轉變飲食習慣也是氣候行動！燕麥奶碳足跡只有牛奶的三分之一，健康、好喝又降溫地球！"
+            },
+            14: {
+                title: "海洋生態",
+                emoji: "🏄‍♂️🐠",
+                color: "bg-sky-600",
+                question: "夏天去海邊玩 SUP 立槳、浮潛，為了防曬你決定：",
+                options: {
+                    A: "戴墨鏡防曬帽、穿長袖防曬水母衣，若抹防曬油也選擇「海洋友善」標章",
+                    B: "狂抹大量便宜化學防曬油直接下海，不理會化學成分會導致珊瑚白化"
+                },
+                correct: "A",
+                action: "海洋友善防曬不只保護你的皮膚，也保護了海底千萬條小魚與美麗珊瑚的生命家園！"
+            },
+            15: {
+                title: "陸地生態",
+                emoji: "🏕️🦌",
+                color: "bg-lime-600",
+                question: "和朋友去高山露營打卡、親近大自然，拔營離開時，烤肉留下的木炭和鋁箔紙：",
+                options: {
+                    A: "落實「無痕山林 (LNT)」，所有垃圾用塑膠袋全部打包帶下山",
+                    B: "直接挖土把垃圾埋在營地旁，覺得反正土蓋上去，過幾年就會分解"
+                },
+                correct: "A",
+                action: "親近山林「除了照片什麼都不拿，除了腳印什麼都不留」，保護野生動物不被塑料和廚餘毒害！"
+            },
+            16: {
+                title: "和平正義與制度",
+                emoji: "🎣📢",
+                color: "bg-blue-700",
+                question: "在 Discord、Threads 上看到很聳動的免費送點數貼圖連結、或是沒聽過的網址：",
+                options: {
+                    A: "不亂點！不亂傳！用事實查核工具或報警查驗，防範釣魚詐騙",
+                    B: "一秒點進去、輸入自己的帳密，還分享給周圍所有好友群組"
+                },
+                correct: "A",
+                action: "不盲信、不轉傳，多利用科技事實查核（如 MyGoPen 或防詐達人），終結網路有害釣魚資訊！"
+            },
+            17: {
+                title: "多元夥伴關係",
+                emoji: "🤝🎉",
+                color: "bg-blue-800",
+                question: "發現這套永續潮流大冒險非常好玩，你決定如何把這個概念散播出去？",
+                options: {
+                    A: "將通關時間成績截圖轉發至 Threads、IG 上挑戰朋友，揪團解鎖綠色生活",
+                    B: "默默把視窗關掉，心想「反正這只是個遊戲，地球好壞不管我的事」"
+                },
+                correct: "A",
+                action: "獨樂樂不如眾樂樂！用社群影響力，帶動身邊朋友建立永續共識，你就是最強的綠色先鋒夥伴！"
+            }
+        };
+
+        // 核心狀態
+        let unlockedLevel = 1; 
+        let activeLevel = 1;   
+        let isMuted = false;
+
+        // 計時器
+        let timerInterval = null;
+        let secondsElapsed = 0;
+        let isTimerRunning = false;
+
+        // Web Audio API
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // 8-Bit 聲波產生器
+        function play8BitTone(freqs, type, durations, delays) {
+            if (isMuted) return;
+            initAudio();
+            try {
+                const now = audioCtx.currentTime;
+                freqs.forEach((freq, index) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, now + delays[index]);
+                    
+                    gain.gain.setValueAtTime(0.12, now + delays[index]);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, now + delays[index] + durations[index]);
+                    
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    
+                    osc.start(now + delays[index]);
+                    osc.stop(now + delays[index] + durations[index]);
+                });
+            } catch (e) {
+                console.log("Audio block bypass.");
+            }
+        }
+
+        // 電玩風音效配置
+        function playClickSound() {
+            // 復古跳躍聲 (頻率快速上揚)
+            play8BitTone([150, 300, 500], 'square', [0.05, 0.05, 0.08], [0, 0.04, 0.08]);
+        }
+
+        function playSuccessSound() {
+            // 經典金幣聲 (叮叮～)
+            play8BitTone([523.25, 987.77], 'square', [0.1, 0.25], [0, 0.08]);
+        }
+
+        function playFailSound() {
+            // 復古受傷聲 (嗡嗡低沉下落)
+            play8BitTone([220, 110], 'sawtooth', [0.15, 0.25], [0, 0.08]);
+        }
+
+        function playVictoryFanfare() {
+            // 歡慶 8-Bit 勝利旋律
+            const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51];
+            notes.forEach((freq, idx) => {
+                play8BitTone([freq], 'square', [0.45], [idx * 0.1]);
+            });
+        }
+
+        // DOM 元素
+        const mapGrid = document.getElementById('map-grid');
+        const progressText = document.getElementById('progress-text');
+        const timerText = document.getElementById('timer-text');
+        const soundToggle = document.getElementById('sound-toggle');
+        const soundIcon = document.getElementById('sound-icon');
+        const soundTextEl = document.getElementById('sound-text');
+        const resetGameBtn = document.getElementById('reset-game-btn');
+
+        // Modal 元素
+        const challengeModal = document.getElementById('challenge-modal');
+        const modalBody = document.getElementById('modal-body'); 
+        const modalHeader = document.getElementById('modal-header');
+        const modalLevelNum = document.getElementById('modal-level-num');
+        const modalSdgsTitle = document.getElementById('modal-sdgs-title');
+        const modalSdgsEmoji = document.getElementById('modal-sdgs-emoji');
+        const modalQuestion = document.getElementById('modal-question');
+        const optA = document.getElementById('opt-a');
+        const optB = document.getElementById('opt-b');
+        const optAText = document.getElementById('opt-a-text');
+        const optBText = document.getElementById('opt-b-text');
+        const guideBox = document.getElementById('guide-box');
+        const modalActionGuide = document.getElementById('modal-action-guide');
+        const nextStageBtn = document.getElementById('next-stage-btn');
+        const modalClose = document.getElementById('modal-close');
+
+        // 自製安全確認視窗元素
+        const confirmModal = document.getElementById('confirm-modal');
+        const confirmYes = document.getElementById('confirm-yes');
+        const confirmNo = document.getElementById('confirm-no');
+
+        // 通關 Modal 元素
+        const victoryModal = document.getElementById('victory-modal');
+        const victoryTime = document.getElementById('victory-time');
+        const victoryReplayBtn = document.getElementById('victory-replay-btn');
+
+        // 本地進度讀取
+        function loadProgress() {
+            const savedLevel = localStorage.getItem('sdgs_adventure_level_cyber');
+            if (savedLevel) {
+                unlockedLevel = parseInt(savedLevel);
+            } else {
+                unlockedLevel = 1;
+            }
+            const savedTime = localStorage.getItem('sdgs_adventure_time_cyber');
+            if (savedTime) {
+                secondsElapsed = parseInt(savedTime);
+            } else {
+                secondsElapsed = 0;
+            }
+        }
+
+        function saveProgress() {
+            localStorage.setItem('sdgs_adventure_level_cyber', unlockedLevel);
+            localStorage.setItem('sdgs_adventure_time_cyber', secondsElapsed);
+        }
+
+        // 計時器
+        function startTimer() {
+            if (isTimerRunning) return;
+            isTimerRunning = true;
+            timerInterval = setInterval(() => {
+                secondsElapsed++;
+                updateTimerDisplay();
+                localStorage.setItem('sdgs_adventure_time_cyber', secondsElapsed);
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timerInterval);
+            isTimerRunning = false;
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(secondsElapsed / 60);
+            const seconds = secondsElapsed % 60;
+            const displayMin = minutes < 10 ? '0' + minutes : minutes;
+            const displaySec = seconds < 10 ? '0' + seconds : seconds;
+            timerText.textContent = `${displayMin}:${displaySec}`;
+        }
+
+        function formatChineseTime(totalSeconds) {
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+            if (minutes > 0) {
+                return `${minutes} 分 ${seconds} 秒`;
+            }
+            return `${seconds} 秒`;
+        }
+
+        // 動態渲染 S 蜿蜒地圖 (3x6 佈局)
+        function renderMap() {
+            mapGrid.innerHTML = '';
+            
+            const layoutOrder = [
+                [1, 2, 3],     
+                [6, 5, 4],     
+                [7, 8, 9],     
+                [12, 11, 10],  
+                [13, 14, 15],  
+                [0, 17, 16]    
+            ];
+
+            layoutOrder.forEach((row, rowIndex) => {
+                row.forEach((lvlNum, colIndex) => {
+                    if (lvlNum === 0) {
+                        const emptyDiv = document.createElement('div');
+                        mapGrid.appendChild(emptyDiv);
+                        return;
+                    }
+
+                    const data = sdgsAdventureData[lvlNum];
+                    const levelButton = document.createElement('div');
+                    
+                    let statusClasses = '';
+                    let innerBadge = '';
+                    let isClickable = false;
+
+                    if (lvlNum < unlockedLevel) {
+                        // 已經通關 (霓虹綠暗沉 + 勾)
+                        statusClasses = `bg-emerald-950/40 border-emerald-500 hover:bg-emerald-900/60 cursor-pointer shadow-md text-emerald-300 scale-95 opacity-80`;
+                        innerBadge = `<span class="absolute -top-2 -right-2 bg-emerald-500 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs shadow-md border border-black">✔</span>`;
+                        isClickable = true;
+                    } else if (lvlNum === unlockedLevel) {
+                        // 當前挑戰關卡 (亮紫閃爍 + 針)
+                        statusClasses = `${data.color} border-white text-white hover:scale-105 cursor-pointer shadow-lg animate-pulse ring-4 ring-offset-2 ring-purple-500 font-extrabold`;
+                        innerBadge = `<span class="absolute -top-2 -right-2 bg-purple-500 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs shadow-md border border-white animate-bounce">📍</span>`;
+                        isClickable = true;
+                    } else {
+                        // 尚未解鎖 (灰色 + 鎖)
+                        statusClasses = `bg-gray-800/50 border-gray-700 text-gray-500 cursor-not-allowed scale-95 opacity-50`;
+                        innerBadge = `<span class="absolute -top-2 -right-2 bg-gray-700 text-gray-400 w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs shadow border border-black">🔒</span>`;
+                        isClickable = false;
+                    }
+
+                    levelButton.className = `relative aspect-square rounded-3xl border-4 flex flex-col items-center justify-center p-2 text-center transition-all duration-300 ${statusClasses}`;
+                    levelButton.dataset.level = lvlNum;
+                    
+                    levelButton.innerHTML = `
+                        ${innerBadge}
+                        <span class="text-xs font-black block leading-none opacity-80">STAGE ${lvlNum}</span>
+                        <span class="text-3xl md:text-4xl my-1 block">${data.emoji.substring(0, 2)}</span>
+                        <span class="text-xs md:text-sm font-black tracking-tight leading-tight block">${data.title}</span>
+                    `;
+
+                    if (isClickable) {
+                        levelButton.addEventListener('click', () => {
+                            activeLevel = lvlNum;
+                            openChallengeModal(lvlNum);
+                        });
+                    }
+
+                    mapGrid.appendChild(levelButton);
+                });
+            });
+
+            progressText.textContent = `${unlockedLevel > 17 ? 17 : unlockedLevel} / 17`;
+        }
+
+        // 開啟劇情對話視窗
+        function openChallengeModal(lvlNum) {
+            initAudio();
+            playClickSound();
+
+            guideBox.classList.add('hidden');
+            nextStageBtn.classList.add('hidden');
+            optA.classList.remove('opacity-50', 'bg-red-950/40', 'bg-emerald-950/40', 'border-red-500', 'border-emerald-500');
+            optB.classList.remove('opacity-50', 'bg-red-950/40', 'bg-emerald-950/40', 'border-red-500', 'border-emerald-500');
+            optA.disabled = false;
+            optB.disabled = false;
+
+            const data = sdgsAdventureData[lvlNum];
+            
+            modalHeader.className = `p-4 text-center text-white relative flex-shrink-0 ${data.color} border-b-2 border-white/20`;
+            modalLevelNum.textContent = `STAGE ${lvlNum} 永續挑戰`;
+            modalSdgsTitle.textContent = data.title;
+            modalSdgsEmoji.textContent = data.emoji;
+            modalQuestion.textContent = data.question;
+
+            optAText.textContent = data.options.A;
+            optBText.textContent = data.options.B;
+
+            modalActionGuide.textContent = data.action;
+
+            modalBody.scrollTop = 0;
+
+            challengeModal.classList.remove('hidden');
+            
+            if (!isTimerRunning) {
+                startTimer();
+            }
+
+            setTimeout(() => {
+                challengeModal.firstElementChild.classList.remove('scale-95');
+                challengeModal.firstElementChild.classList.add('scale-100');
+            }, 50);
+        }
+
+        // 判定使用者回答
+        function handleAnswer(choice) {
+            const data = sdgsAdventureData[activeLevel];
+            const isCorrect = (choice === data.correct);
+
+            optA.disabled = true;
+            optB.disabled = true;
+
+            const chosenBtn = (choice === 'A') ? optA : optB;
+            const otherBtn = (choice === 'A') ? optB : optA;
+
+            if (isCorrect) {
+                playSuccessSound();
+                chosenBtn.classList.add('bg-emerald-950/40', 'border-emerald-500');
+                otherBtn.classList.add('opacity-50');
+
+                setTimeout(() => {
+                    guideBox.classList.remove('hidden');
+                    nextStageBtn.classList.remove('hidden');
+                    
+                    // 自動平滑滾動至底，完美顯露指南與按鈕
+                    modalBody.scrollTo({
+                        top: modalBody.scrollHeight,
+                        behavior: 'smooth'
+                    });
+                }, 300);
+            } else {
+                playFailSound();
+                chosenBtn.classList.add('bg-red-950/40', 'border-red-500');
+                
+                setTimeout(() => {
+                    chosenBtn.classList.remove('bg-red-950/40', 'border-red-500');
+                    optA.disabled = false;
+                    optB.disabled = false;
+                }, 1000);
+            }
+        }
+
+        optA.addEventListener('click', () => handleAnswer('A'));
+        optB.addEventListener('click', () => handleAnswer('B'));
+
+        // 前進下一關
+        nextStageBtn.addEventListener('click', () => {
+            closeChallengeModal();
+
+            if (activeLevel === unlockedLevel) {
+                unlockedLevel++;
+                saveProgress();
+                renderMap();
+
+                if (unlockedLevel > 17) {
+                    stopTimer();
+                    setTimeout(() => {
+                        triggerVictory();
+                    }, 800);
+                }
+            }
+        });
+
+        function triggerVictory() {
+            playVictoryFanfare();
+            victoryTime.textContent = formatChineseTime(secondsElapsed);
+            victoryModal.classList.remove('hidden');
+        }
+
+        function closeChallengeModal() {
+            challengeModal.firstElementChild.classList.remove('scale-100');
+            challengeModal.firstElementChild.classList.add('scale-95');
+            setTimeout(() => {
+                challengeModal.classList.add('hidden');
+            }, 150);
+        }
+
+        modalClose.addEventListener('click', closeChallengeModal);
+        challengeModal.addEventListener('click', (e) => {
+            if (e.target === challengeModal) closeChallengeModal();
+        });
+
+        // 完美替換 confirm 的自製 Dialog 邏輯
+        let confirmCallback = null;
+
+        function showCustomConfirm(callback) {
+            confirmCallback = callback;
+            confirmModal.classList.remove('hidden');
+        }
+
+        confirmYes.addEventListener('click', () => {
+            confirmModal.classList.add('hidden');
+            if (confirmCallback) confirmCallback();
+        });
+
+        confirmNo.addEventListener('click', () => {
+            confirmModal.classList.add('hidden');
+        });
+
+        function resetGame() {
+            unlockedLevel = 1;
+            secondsElapsed = 0;
+            saveProgress();
+            stopTimer();
+            updateTimerDisplay();
+            renderMap();
+        }
+
+        resetGameBtn.addEventListener('click', () => {
+            showCustomConfirm(() => {
+                resetGame();
+            });
+        });
+
+        victoryReplayBtn.addEventListener('click', () => {
+            victoryModal.classList.add('hidden');
+            resetGame();
+        });
+
+        // 音效控制開關
+        soundToggle.addEventListener('click', () => {
+            isMuted = !isMuted;
+            if (isMuted) {
+                soundIcon.textContent = "🔇";
+                soundTextEl.textContent = "音效：關";
+                soundToggle.classList.remove('text-emerald-400');
+                soundToggle.classList.add('text-gray-500');
+            } else {
+                initAudio();
+                soundIcon.textContent = "🔊";
+                soundTextEl.textContent = "音效：開";
+                soundToggle.classList.add('text-emerald-400');
+                soundToggle.classList.remove('text-gray-500');
+                playClickSound();
+            }
+        });
+
+        window.onload = function() {
+            loadProgress();
+            updateTimerDisplay();
+            renderMap();
+            if (unlockedLevel > 17) {
+                triggerVictory();
+            }
+        }
+    </script>
+</body>
+</html>
