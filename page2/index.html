@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI 永續冒險大挑戰 - Modern ESG Quest</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #0f172a; /* 深邃科技暗色底 */
+            color: #f8fafc;
+        }
+        /* 3D 翻牌動畫 */
+        .perspective-1000 { perspective: 1000px; }
+        .preserve-3d { transform-style: preserve-3d; }
+        .backface-hidden { backface-visibility: hidden; }
+        .rotate-y-180 { transform: rotateY(180deg); }
+        .card-active { transform: rotateY(180deg); }
+        
+        /* 隱藏捲動條但保留功能 */
+        .scrollbar-thin::-webkit-scrollbar { height: 6px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: #1e293b; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #475569; border-radius: 3px; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- 潮流漸層 Header -->
+    <header class="bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-500 text-white py-5 px-4 text-center shadow-2xl flex-shrink-0 border-b border-indigo-500/30">
+        <div class="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="text-left">
+                <h1 class="text-2xl md:text-3xl font-black tracking-wider drop-shadow-md flex items-center gap-2 justify-center md:justify-start">
+                    ⚡ SDG 永續極限冒險：AI 智慧大考驗 🪐
+                </h1>
+                <p class="text-xs md:text-sm font-bold mt-1 text-indigo-100 uppercase tracking-widest">
+                    🚀 翻玩永續日常，挑戰 AI 賽博防線！
+                </p>
+            </div>
+            
+            <div class="flex flex-wrap items-center justify-center gap-2">
+                <!-- 語音切換 Pill 開關 -->
+                <button id="speech-autoplay-toggle" onclick="toggleAutoplaySpeech()" class="flex items-center gap-1.5 bg-indigo-600 border border-white/20 px-3 py-1.5 rounded-2xl text-xs font-black transition-all">
+                    <span id="speech-status-icon">🔊</span> <span id="speech-status-text">自動語音：開啟中</span>
+                </button>
+                <!-- API 金鑰輸入 -->
+                <div class="flex items-center gap-1.5 bg-slate-900/40 px-3 py-1.5 rounded-2xl border border-white/20">
+                    <span class="text-xs font-black text-indigo-100">AI 金鑰:</span>
+                    <input type="password" id="api-key-input" placeholder="貼上 Gemini Key (選填)" class="bg-slate-950 text-slate-100 text-xs rounded-xl px-2.5 py-1 w-32 focus:outline-none focus:ring-2 focus:ring-cyan-400 border border-slate-700">
+                </div>
+            </div>
+        </div>
+
+        <!-- 潮流 Tab 分頁導航 -->
+        <nav class="max-w-4xl mx-auto flex justify-center gap-2 md:gap-4 mt-5">
+            <button onclick="switchTab('quiz')" id="tab-quiz" class="nav-tab px-4 py-2.5 rounded-2xl font-black text-sm md:text-base bg-white text-slate-900 shadow-lg transform scale-105 transition-all">
+                🔮 AI 關卡生成
+            </button>
+            <button onclick="switchTab('evaluator')" id="tab-evaluator" class="nav-tab px-4 py-2.5 rounded-2xl font-black text-sm md:text-base bg-slate-800/60 hover:bg-slate-800 text-slate-200 transition-all border border-slate-700/50">
+                📊 ESG 實踐登錄
+            </button>
+            <button onclick="switchTab('memory')" id="tab-memory" class="nav-tab px-4 py-2.5 rounded-2xl font-black text-sm md:text-base bg-slate-800/60 hover:bg-slate-800 text-slate-200 transition-all border border-slate-700/50">
+                🎴 潮流翻牌競速
+            </button>
+        </nav>
+    </header>
+
+    <!-- 主內容區 -->
+    <main class="max-w-4xl mx-auto w-full px-4 py-6 flex-grow flex flex-col justify-start">
+        
+        <!-- 全域 AI 處理提示 -->
+        <div id="ai-loading-bar" class="hidden bg-indigo-950 border-2 border-cyan-400 rounded-2xl p-4 mb-6 text-center text-cyan-300 font-bold shadow-2xl animate-pulse">
+            <div class="flex items-center justify-center gap-3">
+                <svg class="animate-spin h-6 w-6 text-cyan-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span id="ai-loading-text" class="text-base md:text-lg">AI 特工正在為您渲染全新極限挑戰關卡...</span>
+            </div>
+        </div>
+
+        <!-- 自製自訂 Alert Toast -->
+        <div id="custom-toast" class="fixed top-5 left-1/2 -translate-x-1/2 bg-rose-600 text-white font-black px-6 py-3.5 rounded-2xl shadow-2xl border-2 border-white z-50 transition-all transform scale-90 opacity-0 pointer-events-none">
+            <span id="toast-text"></span>
+        </div>
+
+        <!-- ==================== 分頁 1: AI 智慧闖關 ==================== -->
+        <section id="section-quiz" class="tab-content space-y-6">
+            <!-- 關卡選擇步道 -->
+            <div class="bg-slate-900 rounded-3xl p-5 shadow-xl border-2 border-slate-800">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-base md:text-lg font-black text-cyan-400 flex items-center gap-1.5">
+                        🛸 選擇一個 SDG 領域任務：
+                    </h3>
+                    <span class="text-xs font-black text-slate-400 animate-pulse bg-slate-950 px-2 py-1 rounded-lg border border-slate-800">💡 左右滑動探索 17 個領域 ➔</span>
+                </div>
+                <!-- 水平滑動的 SDGs 關卡 -->
+                <div class="flex gap-3 overflow-x-auto pb-3 scrollbar-thin">
+                    <script>
+                        const sdgsNames = {
+                            1: "終結貧窮", 2: "消除飢餓", 3: "健康與福祉", 4: "優質教育",
+                            5: "性別平等", 6: "淨水及衛生", 7: "可負擔能源", 8: "體面工作與經濟",
+                            9: "工業創新基礎", 10: "減少不平等", 11: "永續城鄉", 12: "責任消費生產",
+                            13: "氣候行動", 14: "海洋生態", 15: "陸地生態", 16: "和平正義制度",
+                            17: "多元夥伴關係"
+                        };
+                        const hexColors = [
+                            ["#ef4444", "#7f1d1d"], ["#f59e0b", "#78350f"], ["#10b981", "#064e3b"], ["#dc2626", "#7f1d1d"],
+                            ["#f97316", "#7c2d12"], ["#38bdf8", "#0369a1"], ["#facc15", "#713f12"], ["#b91c1c", "#450a0a"],
+                            ["#f97316", "#7c2d12"], ["#ec4899", "#701a75"], ["#d97706", "#78350f"], ["#ca8a04", "#713f12"],
+                            ["#16a34a", "#14532d"], ["#0284c7", "#0c4a6e"], ["#84cc16", "#3f6212"], ["#2563eb", "#1e3a8a"], ["#4f46e5", "#312e81"]
+                        ];
+                        const colors = [
+                            "bg-rose-500", "bg-amber-500", "bg-emerald-500", "bg-red-600",
+                            "bg-orange-500", "bg-sky-400", "bg-yellow-400", "bg-red-800",
+                            "bg-orange-400", "bg-pink-500", "bg-amber-600", "bg-yellow-600",
+                            "bg-green-600", "bg-sky-600", "bg-lime-500", "bg-blue-600", "bg-indigo-600"
+                        ];
+                        const emojis = [
+                            "🤲", "🥣", "🏃‍♂️", "📚", "🤝", "🚰", "💡", "👩‍🍳", "🚌", "🌍", "🏡", "🛍️", "🌡️", "🐟", "🌳", "🕊️", "🤝"
+                        ];
+                        for (let i = 1; i <= 17; i++) {
+                            document.write(`
+                                <button onclick="generateAIQuiz(${i})" class="flex-shrink-0 flex flex-col items-center justify-center p-3 w-28 rounded-2xl border-2 border-slate-800 hover:border-cyan-400 hover:shadow-[0_0_15px_rgba(34,211,238,0.4)] transition-all ${colors[i-1]} text-white">
+                                    <span class="text-2xl">${emojis[i-1]}</span>
+                                    <span class="text-xs font-black mt-1">領域 ${i}</span>
+                                    <span class="text-[10px] font-bold opacity-90 truncate w-full text-center">${sdgsNames[i]}</span>
+                                </button>
+                            `);
+                        }
+                    </script>
+                </div>
+            </div>
+
+            <!-- AI 生成的題目卡片 -->
+            <div id="ai-quiz-card" class="bg-slate-900 rounded-3xl p-6 shadow-2xl border-4 border-indigo-500 space-y-6 hidden">
+                <div class="flex flex-col md:flex-row gap-6">
+                    <!-- 左側：純向量 SVG 高質感卡片插圖 -->
+                    <div class="w-full md:w-2/5 flex flex-col items-center justify-center bg-slate-950 rounded-2xl p-2 border border-slate-800 relative min-h-[220px]">
+                        <img id="ai-quiz-img" src="" alt="AI SDGs 插圖" class="rounded-xl object-contain w-full h-auto shadow-md">
+                    </div>
+
+                    <!-- 右側：AI 題目與選項 -->
+                    <div class="w-full md:w-3/5 flex flex-col justify-between space-y-4">
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <span id="quiz-sdg-tag" class="bg-red-600 text-white font-black px-3.5 py-1 rounded-full text-xs md:text-sm shadow-md">領域 1 : 終結貧窮</span>
+                                <h2 id="quiz-title" class="text-2xl md:text-3xl font-black mt-2 text-slate-100">載入中...</h2>
+                            </div>
+                            <!-- 播放聲音大按鈕 -->
+                            <button id="ai-speech-btn" onclick="playQuizTTS()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-black p-3.5 rounded-full shadow-lg hover:scale-105 transition-transform flex items-center justify-center flex-shrink-0" title="語音聆聽">
+                                <span class="text-2xl">📢</span>
+                            </button>
+                        </div>
+
+                        <!-- 題目本體 -->
+                        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                            <p id="quiz-question" class="text-lg font-bold leading-relaxed text-slate-300">請在上方選擇領域關卡，AI 將即時發布永續挑戰謎題...</p>
+                        </div>
+
+                        <!-- 二選一按鈕 -->
+                        <div class="grid grid-cols-1 gap-3">
+                            <button onclick="submitAnswer('A')" id="btn-opt-a" class="w-full text-left bg-slate-950 hover:bg-slate-800 active:scale-95 p-4 rounded-2xl border-2 border-slate-800 text-lg font-black text-slate-100 transition-all flex items-center gap-3">
+                                <span class="bg-indigo-500 text-white w-9 h-9 rounded-full flex items-center justify-center font-black flex-shrink-0">A</span>
+                                <span id="opt-a-text">選項 A 載入中...</span>
+                            </button>
+                            <button onclick="submitAnswer('B')" id="btn-opt-b" class="w-full text-left bg-slate-950 hover:bg-slate-800 active:scale-95 p-4 rounded-2xl border-2 border-slate-800 text-lg font-black text-slate-100 transition-all flex items-center gap-3">
+                                <span class="bg-indigo-500 text-white w-9 h-9 rounded-full flex items-center justify-center font-black flex-shrink-0">B</span>
+                                <span id="opt-b-text">選項 B 載入中...</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 答對後的引導 -->
+                <div id="ai-guide-box" class="bg-emerald-950/60 p-5 rounded-2xl border-4 border-emerald-500 hidden space-y-3">
+                    <div class="flex items-center gap-2">
+                        <span class="text-3xl">🌟</span>
+                        <h4 class="text-xl font-black text-emerald-400">永續特務實踐指南：</h4>
+                    </div>
+                    <p id="ai-explanation" class="text-base md:text-lg font-bold text-slate-200 leading-relaxed">
+                        解鎖成功！AI 偵測到您做出的黃金決策...
+                    </p>
+                    <div class="flex justify-between items-center">
+                        <div class="flex gap-2">
+                            <button onclick="playGuideTTS('tw')" class="bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-black py-2.5 px-4 rounded-xl flex items-center gap-2 shadow transition-all">
+                                🗣️ 聽台語說明
+                            </button>
+                            <button onclick="playGuideTTS('zh')" class="bg-cyan-600 hover:bg-cyan-700 active:scale-95 text-white font-black py-2.5 px-4 rounded-xl flex items-center gap-2 shadow transition-all">
+                                🗣️ 聽國語說明
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 分頁 2: AI 生活記錄卡 ==================== -->
+        <section id="section-evaluator" class="tab-content space-y-6 hidden">
+            <div class="bg-slate-900 rounded-3xl p-6 shadow-xl border-4 border-cyan-500 space-y-6">
+                <div class="text-center max-w-xl mx-auto">
+                    <span class="text-5xl">✍️🎨</span>
+                    <h2 class="text-2xl md:text-3xl font-black mt-3 text-cyan-400">ESG 玩家生活登錄中心</h2>
+                    <p class="text-slate-400 font-bold mt-1">
+                        寫下你今天隨手完成的環保或永續酷事！由 AI 即時評分、解析並為你繪製專屬榮譽證書！
+                    </p>
+                </div>
+
+                <!-- 紀錄輸入 -->
+                <div class="space-y-3">
+                    <label class="block text-lg font-black text-slate-200">今天達成了哪項環保創舉？(點選下方熱門範例或手動輸入)</label>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+                        <button onclick="fillExample('我今天洗米的水都拿去陽台澆花')" class="bg-slate-950 hover:bg-slate-800 p-2.5 text-xs md:text-sm rounded-xl font-bold border border-slate-800 text-cyan-400 transition-colors">🚿 洗米水澆花</button>
+                        <button onclick="fillExample('我出門買飲料自備吸管與提袋，拒拿一次性塑膠袋')" class="bg-slate-950 hover:bg-slate-800 p-2.5 text-xs md:text-sm rounded-xl font-bold border border-slate-800 text-cyan-400 transition-colors">🛍️ 自備環保提袋</button>
+                        <button onclick="fillExample('我設定冷氣在27度，並搭配循環扇降溫')" class="bg-slate-950 hover:bg-slate-800 p-2.5 text-xs md:text-sm rounded-xl font-bold border border-slate-800 text-cyan-400 transition-colors">🔌 控溫搭配循環扇</button>
+                        <button onclick="fillExample('我主動購買了超商當天到期的 7 折惜食麵包當晚餐')" class="bg-slate-950 hover:bg-slate-800 p-2.5 text-xs md:text-sm rounded-xl font-bold border border-slate-800 text-cyan-400 transition-colors">🥛 支持友善惜食</button>
+                    </div>
+                    <textarea id="evaluator-input" rows="3" placeholder="例如：我出門上學自備了隨行保溫杯，並搭公車代替騎車，為地球省下二氧化碳排放..." class="w-full p-4 rounded-2xl bg-slate-950 border-2 border-slate-800 focus:outline-none focus:border-cyan-500 text-lg font-bold shadow-inner text-slate-200"></textarea>
+                </div>
+
+                <div class="flex justify-center">
+                    <button onclick="evaluateAction()" class="w-full md:w-auto bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 active:scale-95 text-white font-black text-xl py-4 px-12 rounded-2xl shadow-lg transition-all flex items-center justify-center gap-2">
+                        🎨 召喚 AI 繪圖認證！
+                    </button>
+                </div>
+            </div>
+
+            <!-- 分析卡片 (繪製動態證書) -->
+            <div id="ai-evaluation-card" class="bg-slate-900 rounded-3xl p-6 shadow-2xl border-4 border-amber-400 space-y-6 hidden">
+                <div class="text-center bg-amber-950/40 rounded-2xl p-4 border border-amber-500/30">
+                    <span class="text-5xl">👑</span>
+                    <h3 id="eval-medal-title" class="text-2xl md:text-3xl font-black text-amber-400 mt-1">智慧永續生活達人</h3>
+                </div>
+
+                <div class="flex flex-col md:flex-row gap-6">
+                    <!-- 專屬 AI 認證插畫 Canvas 繪圖 -->
+                    <div class="w-full md:w-1/2 bg-slate-950 p-4 rounded-2xl border border-slate-800 flex flex-col items-center justify-center">
+                        <canvas id="ai-eval-canvas" class="w-full max-w-sm h-auto rounded-xl shadow-2xl border border-slate-800 bg-slate-900"></canvas>
+                        <span class="text-xs text-slate-400 mt-3 font-bold">🎨 AI 特工即時向量合成專屬 ESG 認證卡</span>
+                        <!-- 手機儲存/傳送 LINE -->
+                        <button onclick="downloadHonorCard()" class="mt-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 active:scale-95 text-white text-sm font-black py-2.5 px-4 rounded-xl shadow flex items-center justify-center gap-1.5 transition-all w-full max-w-sm">
+                            📥 儲存榮譽特工卡 (手機可長按另存)
+                        </button>
+                    </div>
+
+                    <!-- 評估與支持目標 -->
+                    <div class="w-full md:w-1/2 space-y-4 flex flex-col justify-between">
+                        <div>
+                            <h4 class="text-lg font-black text-cyan-400">✨ 此舉支持的 SDGs 地球指標：</h4>
+                            <div id="eval-sdg-badges" class="flex flex-wrap gap-2 mt-2">
+                                <!-- 動態填入 SDGs 徽章 -->
+                            </div>
+                        </div>
+
+                        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 flex-grow">
+                            <h4 class="text-lg font-black text-indigo-400 mb-2">📢 AI 指引分析：</h4>
+                            <p id="eval-content" class="text-base md:text-lg font-bold text-slate-200 leading-relaxed">
+                                載入中...
+                            </p>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="playEvalTTS('tw')" class="bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-black py-3 rounded-xl flex items-center justify-center gap-2 shadow transition-all">
+                                🔊 聽台語稱讚
+                            </button>
+                            <button onclick="playEvalTTS('zh')" class="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-black py-3 rounded-xl flex items-center justify-center gap-2 shadow transition-all">
+                                🔊 聽國語稱讚
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 分頁 3: 經典翻牌對抗 ==================== -->
+        <section id="section-memory" class="tab-content space-y-6 hidden">
+            <div class="flex justify-center gap-2 bg-slate-900 rounded-2xl p-3 shadow-md border border-slate-800">
+                <button onclick="toggleMemoryMode('single')" id="mem-mode-single" class="px-4 py-2 rounded-xl font-black text-sm bg-indigo-600 text-white shadow-lg">👤 個人競速極限</button>
+                <button onclick="toggleMemoryMode('team')" id="mem-mode-team" class="px-4 py-2 rounded-xl font-black text-sm bg-slate-950 text-slate-400 border border-slate-800 hover:text-slate-100">👥 戰隊分組抗衡</button>
+            </div>
+
+            <!-- 個人計時看板 -->
+            <div id="mem-panel-single" class="bg-slate-900 rounded-2xl p-4 shadow-md border border-slate-800 grid grid-cols-3 gap-2 text-center">
+                <div class="bg-slate-950 p-2 rounded-xl border border-slate-800">
+                    <span class="block text-slate-500 font-bold text-xs">翻牌探測數</span>
+                    <span id="mem-moves" class="text-xl md:text-2xl font-black text-indigo-400">0</span>
+                </div>
+                <div class="bg-amber-950/20 p-2 rounded-xl border border-amber-900/30">
+                    <span class="block text-amber-500 font-bold text-xs">戰役計時</span>
+                    <span id="mem-timer" class="text-xl md:text-2xl font-black text-amber-500">00:00</span>
+                </div>
+                <div class="bg-slate-950 p-2 rounded-xl border border-slate-800">
+                    <span class="block text-slate-500 font-bold text-xs">成功配對數</span>
+                    <span id="mem-matches" class="text-xl md:text-2xl font-black text-cyan-400">0 / 6</span>
+                </div>
+            </div>
+
+            <!-- 團隊對抗看板 -->
+            <div id="mem-panel-team" class="bg-slate-900 rounded-2xl p-4 shadow-md border border-slate-800 space-y-3 hidden">
+                <div class="text-center p-2 rounded-xl bg-slate-950 border border-slate-800">
+                    <span class="text-xs font-bold text-slate-500">當前進擊特工隊</span>
+                    <div id="mem-turn-banner" class="text-xl md:text-2xl font-black text-rose-500">🔴 紅色烈焰戰隊 的回合！</div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 text-center">
+                    <div id="mem-score-card-red" class="bg-rose-950/30 p-3 rounded-xl border-2 border-rose-500">
+                        <span class="block text-rose-400 font-bold text-xs">🔴 紅色烈焰戰隊</span>
+                        <span id="mem-score-red" class="text-2xl font-black text-rose-500">0</span>
+                    </div>
+                    <div id="mem-score-card-blue" class="bg-cyan-950/30 p-3 rounded-xl border-2 border-transparent">
+                        <span class="block text-cyan-400 font-bold text-xs">🔵 藍色閃電戰隊</span>
+                        <span id="mem-score-blue" class="text-2xl font-black text-cyan-400">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 遊戲網格 -->
+            <div id="mem-game-board" class="grid grid-cols-3 gap-3 md:gap-4 w-full aspect-square max-h-[60vh] mx-auto max-w-md">
+                <!-- JS 動態生成 -->
+            </div>
+
+            <div class="text-center">
+                <button onclick="initMemoryGame()" class="bg-indigo-500 hover:bg-indigo-600 active:scale-95 text-white font-black py-3 px-8 rounded-xl shadow-lg transition-transform">
+                    🔄 重整牌組重新對戰
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ==================== MODALS ==================== -->
+    
+    <!-- 翻牌配對彈窗 (修正 max-h / flex-col / overflow-y 確保按鈕永遠可按) -->
+    <div id="mem-ai-modal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 rounded-3xl max-w-sm w-full max-h-[85vh] shadow-2xl border-4 border-indigo-500 overflow-hidden transform scale-95 transition-all duration-300 flex flex-col">
+            <!-- 彈窗頂部 (不收縮) -->
+            <div id="mem-modal-header" class="p-4 text-center text-white bg-indigo-600 relative flex-shrink-0">
+                <button onclick="closeMemAIModal()" class="absolute top-3 right-3 text-white hover:text-gray-200 text-3xl font-bold focus:outline-none">&times;</button>
+                <div id="mem-modal-num" class="text-xs font-black opacity-80 mb-0.5">領域 1</div>
+                <div id="mem-modal-title" class="text-xl font-black mb-1">終結貧窮</div>
+                <div id="mem-modal-emoji" class="text-5xl">❌💰</div>
+            </div>
+            
+            <!-- 彈窗內容區 (允許在小螢幕手機內自行捲動) -->
+            <div class="p-4 flex-grow overflow-y-auto space-y-4">
+                <div class="bg-slate-950 p-3.5 rounded-2xl border border-slate-800">
+                    <span id="mem-modal-action-title" class="inline-block bg-indigo-600 text-white font-black px-2.5 py-0.5 rounded-full text-xs mb-2">日常實踐特工秘笈：</span>
+                    <p id="mem-modal-text" class="text-base font-bold text-slate-300 leading-relaxed">
+                        載入中...
+                    </p>
+                </div>
+            </div>
+            
+            <!-- 彈窗底部按鈕群 (永遠固定，絕不被蓋掉) -->
+            <div class="p-4 bg-slate-950 border-t border-slate-800 grid grid-cols-3 gap-2 flex-shrink-0">
+                <button onclick="playMemModalTTS('tw')" class="bg-amber-600 hover:bg-amber-700 active:scale-95 text-white font-black py-3 rounded-xl text-xs shadow-md transition-all">
+                    🗣️ 聽台語
+                </button>
+                <button onclick="playMemModalTTS('zh')" class="bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-black py-3 rounded-xl text-xs shadow-md transition-all">
+                    🗣️ 聽國語
+                </button>
+                <button onclick="closeMemAIModal()" class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-black py-3 rounded-xl text-xs shadow-md transition-all">
+                    了解！👍
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 恭喜大勝利 Modal -->
+    <div id="victory-modal" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-gradient-to-br from-indigo-950 to-slate-900 rounded-3xl max-w-sm w-full p-8 text-center shadow-2xl border-4 border-cyan-400 animate-fade-in flex flex-col max-h-[85vh] overflow-hidden">
+            <div class="text-7xl mb-4">🏆⚡🌌</div>
+            <h2 class="text-2xl font-black text-cyan-400 mb-2">終極挑戰通關！</h2>
+            <div class="bg-slate-950 p-5 rounded-2xl my-4 border-2 border-slate-800 shadow-inner flex-grow overflow-y-auto">
+                <p class="text-lg text-slate-400 font-bold mb-2">戰役總結成績：</p>
+                <p id="victory-stats" class="text-xl font-black text-slate-100">⏱️ 時間：1分20秒</p>
+            </div>
+            <button onclick="closeVictoryModal()" class="w-full bg-gradient-to-r from-cyan-500 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 active:scale-95 text-white font-black py-4 rounded-2xl text-lg shadow-lg flex-shrink-0 transition-transform">
+                太棒了，再戰一局！ 🎯
+            </button>
+        </div>
+    </div>
+
+    <footer class="bg-slate-950 text-slate-500 text-center py-4 text-xs font-bold border-t border-slate-800 flex-shrink-0">
+        🛸 啟動賽博永續科技，用酷習慣重塑我們的完美地球！
+    </footer>
+
+    <script>
+        // 本地預設關卡庫 (年輕化、遊戲感、特工化文風)
+        const localQuizDatabase = {
+            1: {
+                title: "二手潮物交易",
+                question: "今天清理房間翻出好幾件買來只穿過一次的限量版潮T和乾淨鞋子。你打算如何回收再利用？",
+                optionA: "洗淨後上架到二手App或市集，讓更有需要的潮流同好延續物命",
+                optionB: "直接扔進一般垃圾袋送進焚化爐，省時省力",
+                correctOption: "A",
+                explanation: "酷斃了！「循環時尚」是現代玩家必修課。將閒置二手衣物在社群分享或二手App交易，能有效省下紡織品生產過程產生的碳排放，好品味與好心腸一起傳遞！"
+            },
+            2: {
+                title: "拯救格外醜蔬果",
+                question: "在有機市集上，你看到外表歪七扭八、長得像章魚的「格外品」醜胡蘿蔔：",
+                optionA: "照樣買回家，切塊做成美味咖哩飯，風味營養完全不打折",
+                optionB: "嫌棄長相，只買包裝精美、被機器刨得精緻對稱的完美蔬果",
+                correctOption: "A",
+                explanation: "沒錯！外貌不代表一切。高達三分之一的作物因為長相不合規矩在產地就被白白丟棄。多支持醜蔬果能幫助農民，更能大幅消除剩食危機！"
+            },
+            3: {
+                title: "低碳行者",
+                question: "週末和朋友約在社區附近的文創園區，你打算用何種綠色方式帥氣登場？",
+                optionA: "租一台 YouBike 或是搭大眾捷運前往，沿路散步兼健身",
+                optionB: "叫一台高排氣量的老舊油車，不顧沿路排放大量黑煙",
+                correctOption: "A",
+                explanation: "酷炫低碳！每天規律騎鐵馬、多搭大眾運具或散步，除了累積個人體能，更是用身體力行對抗都市高碳排放！"
+            },
+            4: {
+                title: "跨界學習極限",
+                question: "社區活動中心新開設了「AI 自動化應用」與「綠色永續生活青年班」，你要報名嗎？",
+                optionA: "立刻報名，去多認識志同道合、一起為地球盡心力的永續玩家！",
+                optionB: "覺得跟自己沒關係，寧願待在家刷短影音到半夜",
+                correctOption: "A",
+                explanation: "終身學習就是最酷的技能！學會新科技及永續思維，能開啟全新視野。動手動腦，才是名副其實的現代智慧生活！"
+            },
+            5: {
+                title: "多元性別平權",
+                question: "回到宿舍或家裡，發現廚房堆了一大堆需要刷洗的油膩碗盤：",
+                optionA: "大家平起平坐，不分男女共同分配家務，一人一半很快就搞定",
+                optionB: "按照過時老想法，直接把洗碗拖地丟給媽媽或女性伴侶包辦",
+                correctOption: "A",
+                explanation: "平權時代，貼心至上！不分性別、共同承擔日常家務，能徹底幫彼此減壓，家庭氣氛與團隊和諧指數直接點滿！"
+            },
+            6: {
+                title: "水循環極客",
+                question: "煮義大利麵或洗米時，流出來的那些乾淨廢水可以用什麼神技二次利用？",
+                optionA: "用容器盛接起來，拿去陽台灌溉盆栽、或者清洗陽台汙垢",
+                optionB: "隨手倒進水槽放它流走，一點也不想浪費時間裝水",
+                correctOption: "A",
+                explanation: "恭喜解鎖水循環大師！乾淨的洗米、洗菜水含有養分，極度適合用來滋養植物。一水多用，省水效率直接提升100%！"
+            },
+            7: {
+                title: "瓦解偷電幽靈",
+                question: "深夜睡覺時，客廳那些待機指示燈（電視、微波爐、延長線開關）其實都在默默偷電：",
+                optionA: "安裝智慧定時排程延長線，在深夜一鍵切斷閒置電器的待機電源",
+                optionB: "沒差，讓它們 24 小時保持待機運作，電費交給爸媽付就好",
+                correctOption: "A",
+                explanation: "精準斬斷待機鬼電！電視機的 LED 指示燈和電器微弱的待機波默默在燒你的荷包，一鍵切斷電源是永續青年的基本配備！"
+            },
+            8: {
+                title: "友善支持在地小農",
+                question: "週末在小農市集看見一位返鄉青年推廣友善耕作的無農藥葉菜類：",
+                optionA: "支持在地耕作，減少食物長途運送造成的驚人碳足跡",
+                optionB: "不管三七二十一，瘋狂跟小農殺價殺到最低",
+                correctOption: "A",
+                explanation: "支持無毒小農，守護土地！免去長途運輸，支持無農藥耕作，就是支持土地復育與最體面的農業就業環境！"
+            },
+            9: {
+                title: "微交通與綠運輸",
+                question: "如果要到隔壁市鎮參加音樂祭，什麼低碳交通提案最符合現代 ESG 潮流？",
+                optionA: "呼朋引伴一起搭乘共乘高鐵、台鐵，少開私家車出門",
+                optionB: "一個人開著高排碳的大排氣量跑車一路塞車前往",
+                correctOption: "A",
+                explanation: "共乘與軌道運輸是現代城市低碳演繹的經典之作。不僅一路免受塞車之苦，還能與好友共度音樂祭前奏！"
+            },
+            10: {
+                title: "擁抱多元共融",
+                question: "在校園或工作場合，遇到神情有些手足無措的跨國外籍新同學：",
+                optionA: "主動用英文、翻譯軟體打招呼問候，帶他熟悉周邊環境與飲食",
+                optionB: "嫌麻煩，用懷疑或排擠的冷漠神情盯著他看，裝作不認識",
+                correctOption: "A",
+                explanation: "你太酷了！友善包容的多元文化能讓所有人感到心安與溫暖。多元夥伴關係就是從人與人的真誠關懷開始！"
+            },
+            11: {
+                title: "淨零創生庄頭",
+                question: "週末上午社區發展協會發起一場「廢棄空地大變身、綠植彩繪淨化日」活動：",
+                optionA: "主動參加！和同伴一起動手清理雜草、預防病媒蚊，創造綠意美景",
+                optionB: "那是清潔隊的工作，宅在家繼續睡大覺，對生活環境漠不關心",
+                correctOption: "A",
+                explanation: "創造舒適城鄉！自己動手維護社區綠覆率，消滅病媒蚊孳生源，住得更清爽，這才是永續城鄉的青年代表！"
+            },
+            12: {
+                title: "惜食綠色救援",
+                question: "下午去超商買點心，發現架上有當天即期、貼了 7 折標籤的飯糰與牛奶：",
+                optionA: "如果是打算立刻當下午茶吃，優先選購 7 折惜食，省錢又減廢！",
+                optionB: "絕對不買，一定要伸手到貨架深處拿期限最長、外觀最亮的那盒",
+                correctOption: "A",
+                explanation: "惜食貼紙就是拯救地球的榮譽標誌！在有效期限內吃完即期食物，是終結超商剩食浪費的最硬核行動！"
+            },
+            13: {
+                title: "陽台自然降溫計畫",
+                question: "盛夏的房間被西曬熱得像烤箱。除了拼命開冷氣，有什麼更永續的綠色隔熱防護？",
+                optionA: "在窗台陽台種植幾盆黃金葛或攀藤類遮陽防護，阻擋熱輻射",
+                optionB: "冷氣直接調到 16 度低溫，一邊蓋厚被子一邊二十四小時開著",
+                correctOption: "A",
+                explanation: "植物是天然的遮陽牆！在窗邊多擺綠植不僅養眼，還能有效抵擋刺眼直射，阻絕熱輻射進而降溫 2~3 度，超省能！"
+            },
+            14: {
+                title: "淨灘不留痕跡",
+                question: "和好友相約去沙灘踏浪、舉辦落日派對，吃完的點心盒與塑膠飲料瓶該怎麼處理？",
+                optionA: "全部打包，並分類帶回市區丟棄，甚至順手撿起地上的廢棄塑膠",
+                optionB: "裝作沒看見，塞進消波塊縫隙，反正大浪一沖就神不知鬼不覺",
+                correctOption: "A",
+                explanation: "海洋守護特工！塑膠微粒是海洋生態的致命殺手。帶走垃圾並落實回收，才能讓海龜和魚群有一片乾淨、不受干擾的藍海！"
+            },
+            15: {
+                title: "無痕山林探險",
+                question: "休假去山林古道越野健行，看到步道旁開了極度精緻罕見的本土野花：",
+                optionA: "用相機拍照、錄影記錄其生機，絕對不動手攀折或帶回家養",
+                optionB: "覺得很酷，順手採摘幾朵做成乾花標本帶回家炫耀",
+                correctOption: "A",
+                explanation: "落實「無痕山林」守則！除了回憶，不帶走山林任何一草一物。保護陸地生態系多樣性，讓大自然生生不息！"
+            },
+            16: {
+                title: "數位謠言防線",
+                question: "在群組看見一條聳動的新聞：「喝這杯神奇水一週內能排毒瘦身！」：",
+                optionA: "絕不盲目轉發！先利用事實查核工具（如美玉姨、MyGoPen）查證真偽",
+                optionB: "覺得超酷，二話不說一鍵轉發到所有家族及好友的群組裡",
+                correctOption: "A",
+                explanation: "數位防詐小尖兵！拒絕散佈未經求證的聳動新聞與醫療偏方，多一步查證動作，能阻止假訊息散佈，保護身邊親友！"
+            },
+            17: {
+                title: "永續共創同好會",
+                question: "發現日常生活實踐 SDGs 其實一點都不困難，而且很省錢好玩。該怎麼推廣？",
+                optionA: "邀約身邊的朋友在社群分享個人的綠色日常，揪團一起落實減塑省能",
+                optionB: "自己知道就好，覺得別人的生活型態與我完全不相干",
+                correctOption: "A",
+                explanation: "團結力量大！和朋友成立「減碳自律同盟」，互相督促記錄，不僅能結交志同道合的好友，也讓綠色生活成為最時髦的態度！"
+            }
+        };
+    </script>
+
+    <script>
+        // 核心狀態
+        let currentTab = 'quiz';
+        let selectedSdgId = 1;
+        let autoplaySpeech = true; // 是否自動朗讀語音
+
+        // 語音播放變數
+        let synth = window.speechSynthesis;
+        let quizUtterance = null;
+        let guideUtterance = null;
+        let evalUtterance = null;
+        let memUtterance = null;
+
+        // 自製 Toast Alert
+        function showToast(message) {
+            const toast = document.getElementById('custom-toast');
+            const text = document.getElementById('toast-text');
+            text.textContent = message;
+            toast.classList.remove('opacity-0', 'scale-90', 'pointer-events-none');
+            toast.classList.add('opacity-100', 'scale-100');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'scale-100');
+                toast.classList.add('opacity-0', 'scale-90', 'pointer-events-none');
+            }, 2500);
+        }
+
+        // 語音自動播放切換
+        function toggleAutoplaySpeech() {
+            autoplaySpeech = !autoplaySpeech;
+            const icon = document.getElementById('speech-status-icon');
+            const text = document.getElementById('speech-status-text');
+            const btn = document.getElementById('speech-autoplay-toggle');
+            
+            if (autoplaySpeech) {
+                icon.textContent = "🔊";
+                text.textContent = "自動語音：開啟中";
+                btn.className = "flex items-center gap-1.5 bg-indigo-600 border border-white/20 px-3 py-1.5 rounded-2xl text-xs font-black transition-all";
+            } else {
+                icon.textContent = "🔇";
+                text.textContent = "自動語音：已關閉";
+                btn.className = "flex items-center gap-1.5 bg-slate-900/40 border border-white/20 px-3 py-1.5 rounded-2xl text-xs font-black transition-all";
+                stopAllTTS();
+            }
+        }
+
+        // API 金鑰取得
+        function getApiKey() {
+            return document.getElementById('api-key-input').value.trim() || "";
+        }
+
+        // 分頁切換
+        function switchTab(tabId) {
+            currentTab = tabId;
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.nav-tab').forEach(el => {
+                el.className = "nav-tab px-4 py-2.5 rounded-2xl font-black text-sm md:text-base bg-slate-800/60 hover:bg-slate-800 text-slate-200 transition-all border border-slate-700/50";
+            });
+
+            document.getElementById(`section-${tabId}`).classList.remove('hidden');
+            const activeTabBtn = document.getElementById(`tab-${tabId}`);
+            activeTabBtn.className = "nav-tab px-4 py-2.5 rounded-2xl font-black text-sm md:text-base bg-white text-slate-900 shadow-lg transform scale-105 transition-all";
+
+            stopAllTTS();
+
+            if (tabId === 'memory') {
+                initMemoryGame();
+            }
+        }
+
+        function stopAllTTS() {
+            if (synth) {
+                synth.cancel();
+            }
+        }
+
+        // 純前端 SVG 向量圖形生圖引擎 (100% 離線可用，完美杜絕空白破圖！)
+        function generateSdgVectorCard(sdgId, title) {
+            const emoji = emojis[sdgId - 1] || "🌍";
+            const color1 = hexColors[sdgId - 1][0];
+            const color2 = hexColors[sdgId - 1][1] || "#0f172a";
+            
+            const svg = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="100%" height="100%">
+                <defs>
+                    <linearGradient id="grad-${sdgId}" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:${color1};stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:${color2};stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <rect width="400" height="300" rx="24" fill="url(#grad-${sdgId})" />
+                <path d="M 0 50 L 400 50 M 0 100 L 400 100 M 0 150 L 400 150 M 0 200 L 400 200 M 0 250 L 400 250 M 50 0 L 50 300 M 100 0 L 100 300 M 150 0 L 150 300 M 200 0 L 200 300 M 250 0 L 250 300 M 300 0 L 300 300 M 350 0 L 350 300" stroke="rgba(255,255,255,0.04)" stroke-width="1.5" fill="none" />
+                <circle cx="200" cy="115" r="55" fill="rgba(0,0,0,0.35)" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
+                <text x="200" y="138" font-family="'Noto Sans TC', sans-serif" font-size="64" text-anchor="middle">${emoji}</text>
+                <text x="200" y="225" font-family="'Noto Sans TC', sans-serif" font-weight="900" font-size="24" fill="#ffffff" text-anchor="middle" letter-spacing="1" style="filter: drop-shadow(0px 2px 5px rgba(0,0,0,0.65));">${title}</text>
+                <text x="200" y="258" font-family="'Noto Sans TC', sans-serif" font-weight="700" font-size="11" fill="rgba(255,255,255,0.6)" text-anchor="middle" letter-spacing="4">ACTIVE ESG MISSION</text>
+            </svg>
+            `;
+            return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+        }
+
+        // ==================== 1. AI 智慧闖關邏輯 ====================
+        let currentQuizData = null;
+
+        async function generateAIQuiz(sdgId) {
+            selectedSdgId = sdgId;
+            stopAllTTS();
+            
+            const loaderBar = document.getElementById('ai-loading-bar');
+            const loaderText = document.getElementById('ai-loading-text');
+            const quizCard = document.getElementById('ai-quiz-card');
+            const guideBox = document.getElementById('ai-guide-box');
+
+            loaderBar.classList.remove('hidden');
+            loaderText.textContent = `正在召喚 AI 生成領域 ${sdgId} 的科技永續極限謎題...`;
+            quizCard.classList.add('hidden');
+            guideBox.classList.add('hidden');
+
+            const apiKey = getApiKey();
+
+            // 若沒輸入 API Key 則無縫轉在地極速模組
+            if (!apiKey) {
+                setTimeout(() => {
+                    useLocalQuizFallback(sdgId);
+                }, 400);
+                return;
+            }
+
+            // 使用 Gemini API 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+            const prompt = `你是一位熱血、充滿現代科技感、擅長用潮流詞彙向年輕玩家推廣 SDGs 與 ESG 的永續教練。
+            請針對聯合國永續發展目標 (SDGs) 第 ${sdgId} 項：『${sdgsNames[sdgId]}』，設計一道與台灣青年日常生活密切相關的「二選一情境抉擇謎題」（例如買超商即期品、租YouBike、自備環保吸管、數位防詐騙等）。
+            請務必回傳嚴格符合以下 JSON 架構的物件，切勿附帶任何 markdown 標記（如 \`\`\`json）：
+            {
+                "title": "潮流關卡名稱(6字內)",
+                "question": "充滿科技感與生活情境的角色扮演描述(50至100字，用玩家、永續特務做主角)",
+                "optionA": "符合 ESG 與 SDGs 永續精神的正確選項A",
+                "optionB": "不環保、高排碳或錯誤的做法選項B",
+                "correctOption": "A",
+                "explanation": "答對後的極客實踐指引。多加肯定、融入酷炫潮流感，字數至少 120 字以上。"
+            }
+            注意：'correctOption' 必須是 A（即 A 為正確環保選項，B 為高碳/不環保選項）。`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ parts: [{ text: prompt }] }]
+                    })
+                });
+
+                if (!response.ok) throw new Error("API 請求失敗");
+                
+                const responseData = await response.json();
+                const responseText = responseData.candidates[0].content.parts[0].text;
+                const cleanJson = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
+                const parsed = JSON.parse(cleanJson);
+                
+                displayQuiz(parsed);
+            } catch (err) {
+                console.warn("Gemini 呼叫失敗，切換至本機永續資料庫: ", err);
+                useLocalQuizFallback(sdgId);
+            }
+        }
+
+        function useLocalQuizFallback(sdgId) {
+            const data = localQuizDatabase[sdgId] || localQuizDatabase[1];
+            displayQuiz(data);
+        }
+
+        function displayQuiz(data) {
+            currentQuizData = data;
+            document.getElementById('ai-loading-bar').classList.add('hidden');
+            
+            const card = document.getElementById('ai-quiz-card');
+            card.classList.remove('hidden');
+
+            const sdgTag = document.getElementById('quiz-sdg-tag');
+            sdgTag.className = `text-white font-black px-3.5 py-1 rounded-full text-xs md:text-sm ${colors[selectedSdgId-1]}`;
+            sdgTag.textContent = `領域 ${selectedSdgId} : ${sdgsNames[selectedSdgId]}`;
+
+            document.getElementById('quiz-title').textContent = data.title;
+            document.getElementById('quiz-question').textContent = data.question;
+            
+            document.getElementById('opt-a-text').textContent = data.optionA;
+            document.getElementById('opt-b-text').textContent = data.optionB;
+
+            // 100% 離線純前端 SVG 高科技插圖渲染，完美杜絕空白破圖
+            document.getElementById('ai-quiz-img').src = generateSdgVectorCard(selectedSdgId, data.title);
+
+            const btnA = document.getElementById('btn-opt-a');
+            const btnB = document.getElementById('btn-opt-b');
+            btnA.className = "w-full text-left bg-slate-950 hover:bg-slate-800 p-4 rounded-2xl border-2 border-slate-800 text-lg font-black text-slate-100 transition-all flex items-center gap-3";
+            btnB.className = "w-full text-left bg-slate-950 hover:bg-slate-800 p-4 rounded-2xl border-2 border-slate-800 text-lg font-black text-slate-100 transition-all flex items-center gap-3";
+            btnA.disabled = false;
+            btnB.disabled = false;
+
+            if (autoplaySpeech) {
+                setTimeout(() => {
+                    playQuizTTS();
+                }, 300);
+            }
+        }
+
+        function playQuizTTS() {
+            if (!currentQuizData || !synth) return;
+            synth.cancel();
+            
+            const speechText = `${currentQuizData.title}。${currentQuizData.question}。請選擇 A：${currentQuizData.optionA}，還是 B：${currentQuizData.optionB}。`;
+            quizUtterance = new SpeechSynthesisUtterance(speechText);
+            quizUtterance.lang = 'zh-TW';
+            quizUtterance.rate = 0.85; 
+            synth.speak(quizUtterance);
+        }
+
+        function submitAnswer(choice) {
+            if (!currentQuizData) return;
+
+            const btnA = document.getElementById('btn-opt-a');
+            const btnB = document.getElementById('btn-opt-b');
+            btnA.disabled = true;
+            btnB.disabled = true;
+
+            const correct = currentQuizData.correctOption || 'A';
+            const selectedBtn = (choice === 'A') ? btnA : btnB;
+            const otherBtn = (choice === 'A') ? btnB : btnA;
+
+            if (choice === correct) {
+                selectedBtn.className = "w-full text-left bg-emerald-950/80 p-4 rounded-2xl border-4 border-emerald-500 text-lg font-black text-emerald-300 transition-all flex items-center gap-3 shadow-[0_0_15px_rgba(16,185,129,0.3)]";
+                otherBtn.className = "w-full text-left bg-slate-950 p-4 rounded-2xl border-2 border-slate-900 text-lg font-black text-slate-600 transition-all flex items-center gap-3 opacity-30";
+                
+                document.getElementById('ai-explanation').textContent = currentQuizData.explanation;
+                const guideBox = document.getElementById('ai-guide-box');
+                guideBox.classList.remove('hidden');
+
+                if (autoplaySpeech) {
+                    setTimeout(() => {
+                        playGuideTTS('zh'); 
+                    }, 300);
+                }
+            } else {
+                selectedBtn.className = "w-full text-left bg-rose-950/80 p-4 rounded-2xl border-4 border-rose-500 text-lg font-black text-rose-300 transition-all flex items-center gap-3 shadow-[0_0_15px_rgba(244,63,94,0.3)]";
+                
+                synth.cancel();
+                const failSpeech = new SpeechSynthesisUtterance("噢！這條路不夠永續喔。再研究一下，按下另一個選項，重置你的綠色決策吧！");
+                failSpeech.lang = 'zh-TW';
+                failSpeech.rate = 0.85;
+                synth.speak(failSpeech);
+
+                setTimeout(() => {
+                    selectedBtn.className = "w-full text-left bg-slate-950 hover:bg-slate-800 p-4 rounded-2xl border-2 border-slate-800 text-lg font-black text-slate-100 transition-all flex items-center gap-3";
+                    btnA.disabled = false;
+                    btnB.disabled = false;
+                }, 1500);
+            }
+        }
+
+        function playGuideTTS(langType = 'zh') {
+            if (!currentQuizData || !synth) return;
+            synth.cancel();
+
+            let praise = "決策完全命中！你太酷了！";
+            if (langType === 'tw') {
+                praise = "選對囉！你真正厲害，很有眼光！";
+            }
+
+            const speechText = `${praise}。${currentQuizData.explanation}`;
+            guideUtterance = new SpeechSynthesisUtterance(speechText);
+            guideUtterance.lang = 'zh-TW';
+            guideUtterance.rate = 0.85;
+            synth.speak(guideUtterance);
+        }
+    </script>
+
+    <!-- ==================== 2. AI 生活記錄卡邏輯 ==================== -->
+    <script>
+        let currentEvalData = null;
+
+        function fillExample(text) {
+            document.getElementById('evaluator-input').value = text;
+        }
+
+        async function evaluateAction() {
+            const textInput = document.getElementById('evaluator-input').value.trim();
+            if (!textInput) {
+                showToast("請先輸入您今天達成的永續日常創舉喔！");
+                return;
+            }
+
+            stopAllTTS();
+            document.getElementById('ai-loading-bar').classList.remove('hidden');
+            document.getElementById('ai-loading-text').textContent = "AI 永續教練正在解析您的減碳創舉，同步繪製 ESG 特工特製認證勳章...";
+            document.getElementById('ai-evaluation-card').classList.add('hidden');
+
+            const apiKey = getApiKey();
+
+            // 判斷是否使用離線模式
+            if (!apiKey) {
+                setTimeout(() => {
+                    useLocalEvalFallback(textInput);
+                }, 400);
+                return;
+            }
+
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+            const prompt = `你是一位超級熱血、潮流感十足、善用賽博與遊戲化評語的 ESG 永續大師。
+            玩家今天登錄了一件生活實踐：『${textInput}』。
+            請分析這個創舉呼應了哪幾個聯合國 SDGs 目標（最多 3 個，只要回傳數字陣列），並寫下充滿未來感、給予高分並大力讚賞玩家的評語。
+            請務必回傳嚴格符合以下 JSON 架構的物件，切勿附帶任何 markdown 標記：
+            {
+                "medalTitle": "酷炫的ESG特工榮譽稱號(6字內)",
+                "sdgIds": [1, 12, 13],
+                "praiseZh": "國語版熱情前衛評語，多讚美玩家有未來思維、走在減碳最前線，字數 120 字以上。",
+                "praiseTw": "台語發音版評語（用生動的台語漢字與羅馬拼音混寫，例如：『著啦！你安捏做真正是行在潮流最頂端！』），字數 120 字以上。"
+            }`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+                });
+
+                if (!response.ok) throw new Error("API 請求失敗");
+                
+                const responseData = await response.json();
+                const responseText = responseData.candidates[0].content.parts[0].text;
+                const cleanJson = responseText.replace(/```json/g, '').replace(/```/g, '').trim();
+                const parsed = JSON.parse(cleanJson);
+                
+                displayEvaluation(parsed, textInput);
+            } catch (err) {
+                console.warn("Gemini 評估失敗，自動轉入離線規則引擎: ", err);
+                useLocalEvalFallback(textInput);
+            }
+        }
+
+        function useLocalEvalFallback(input) {
+            const detectedSdgs = [];
+            let medal = "潮流ESG行者";
+            let zh = `太帥了！你達成了「${input}」這項高難度成就，完全符合永續行動美學！每個人微小的習慣改變，都在為我們地球重組全新生機。你的綠色影響力將號召更多玩家一同抵達永續終點站！`;
+            let tw = `你今仔日完成了「${input}」，這款創舉真正是行在潮流最頂端！省能源擱保護地球生態，不止是留給未來的子孫最乾淨的環境，你就是我們引以為傲的 ESG 戰力之神！`;
+
+            if (input.includes("水") || input.includes("澆花") || input.includes("洗米")) {
+                detectedSdgs.push(6);
+                medal = "微米水域行者";
+            }
+            if (input.includes("電") || input.includes("冷氣") || input.includes("風扇") || input.includes("插頭")) {
+                detectedSdgs.push(7);
+                detectedSdgs.push(13);
+                medal = "量子節能特工";
+            }
+            if (input.includes("袋") || input.includes("塑膠") || input.includes("自備") || input.includes("提袋")) {
+                detectedSdgs.push(12);
+                medal = "無塑極簡先鋒";
+            }
+            if (input.includes("惜食") || input.includes("打折") || input.includes("即期") || input.includes("剩食")) {
+                detectedSdgs.push(2);
+                detectedSdgs.push(12);
+                medal = "惜食救世神廚";
+            }
+            if (input.includes("舊物") || input.includes("衣服") || input.includes("市集") || input.includes("二手")) {
+                detectedSdgs.push(1);
+                medal = "循環時尚行者";
+            }
+
+            if (detectedSdgs.length === 0) {
+                detectedSdgs.push(11);
+                detectedSdgs.push(17);
+            }
+
+            displayEvaluation({
+                medalTitle: medal,
+                sdgIds: detectedSdgs,
+                praiseZh: zh,
+                praiseTw: tw
+            }, input);
+        }
+
+        // 動態使用 HTML5 Canvas 繪製高科技霓虹感的榮譽特工卡
+        function drawHonorCard(medalTitle, sdgId, textInput) {
+            const canvas = document.getElementById('ai-eval-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            // 裝置高畫質適配
+            canvas.width = 600;
+            canvas.height = 450;
+            
+            ctx.clearRect(0, 0, 600, 450);
+            
+            const themeColors = {
+                1: ['#EF4444', '#1E1B4B'], 
+                2: ['#D97706', '#1E1B4B'], 
+                3: ['#10B981', '#111827'], 
+                4: ['#B91C1C', '#111827'],
+                5: ['#F97316', '#1E1B4B'],
+                6: ['#0284C7', '#111827'], 
+                7: ['#EAB308', '#111827'], 
+                8: ['#991B1B', '#1E1B4B'],
+                9: ['#EA580C', '#111827'],
+                10: ['#E11D48', '#111827'],
+                11: ['#CA8A04', '#1E1B4B'],
+                12: ['#CA8A04', '#1E1B4B'],
+                13: ['#059669', '#111827'],
+                14: ['#0369A1', '#111827'],
+                15: ['#4D7C0F', '#1E1B4B'],
+                16: ['#1D4ED8', '#111827'],
+                17: ['#4F46E5', '#111827']
+            };
+            
+            const theme = themeColors[sdgId] || ['#6366F1', '#0F172A'];
+            
+            // 滿版賽博漸層
+            const grad = ctx.createLinearGradient(0, 0, 600, 450);
+            grad.addColorStop(0, '#0f172a');
+            grad.addColorStop(0.5, '#1e1b4b');
+            grad.addColorStop(1, '#090d16');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 600, 450);
+            
+            // 霓虹亮邊框
+            ctx.strokeStyle = theme[0];
+            ctx.lineWidth = 10;
+            ctx.strokeRect(20, 20, 560, 410);
+            
+            ctx.strokeStyle = '#22d3ee'; // 青色內框細線
+            ctx.lineWidth = 2;
+            ctx.strokeRect(30, 30, 540, 390);
+            
+            // 頂端裝飾
+            ctx.fillStyle = '#22d3ee';
+            ctx.font = 'bold 20px "Noto Sans TC", system-ui, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('⚡ ESG GLOBAL DAILY ACTION REGISTRY ⚡', 300, 70);
+            
+            // 勳章主體外光暈
+            ctx.beginPath();
+            ctx.arc(300, 185, 75, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(34, 211, 238, 0.15)';
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.arc(300, 185, 65, 0, Math.PI * 2);
+            ctx.fillStyle = '#1e293b';
+            ctx.strokeStyle = theme[0];
+            ctx.lineWidth = 4;
+            ctx.fill();
+            ctx.stroke();
+            
+            // 徽章 Emoji
+            ctx.font = '72px "Noto Sans TC", sans-serif';
+            ctx.textBaseline = 'middle';
+            const sdgEmojis = ["🤲", "🥣", "🏃‍♂️", "📚", "🤝", "🚰", "💡", "👩‍🍳", "🚌", "🌍", "🏡", "🛍️", "🌡️", "🐟", "🌳", "🕊️", "🤝"];
+            const iconEmoji = sdgEmojis[sdgId - 1] || "🚀";
+            ctx.fillText(iconEmoji, 300, 185);
+            
+            // 認證大稱號
+            ctx.textBaseline = 'alphabetic'; 
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '900 36px "Noto Sans TC", system-ui, sans-serif';
+            ctx.fillText(medalTitle, 300, 305);
+            
+            // 玩家登錄內容
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = 'bold 16px "Noto Sans TC", system-ui, sans-serif';
+            let formattedInput = textInput;
+            if (formattedInput.length > 25) {
+                formattedInput = formattedInput.substring(0, 23) + '...';
+            }
+            ctx.fillText(`達成任務: 「 ${formattedInput} 」`, 300, 345);
+            
+            // 認證水印
+            ctx.save();
+            ctx.translate(485, 340);
+            ctx.rotate(-0.15);
+            ctx.strokeStyle = 'rgba(34, 211, 238, 0.8)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(-50, -20, 100, 40);
+            ctx.fillStyle = 'rgba(34, 211, 238, 0.8)';
+            ctx.font = 'bold 12px "Noto Sans TC", system-ui, sans-serif';
+            ctx.fillText('AI AGENT', 0, -3);
+            ctx.fillText('VERIFIED', 0, 14);
+            ctx.restore();
+
+            // 認證日期
+            const now = new Date();
+            const dateStr = `${now.getFullYear()} - ${String(now.getMonth() + 1).padStart(2, '0')} - ${String(now.getDate()).padStart(2, '0')}`;
+            ctx.fillStyle = '#475569';
+            ctx.font = 'bold 13px "Noto Sans TC", system-ui, sans-serif';
+            ctx.fillText(`驗證時戳: ${dateStr}`, 300, 385);
+        }
+
+        function downloadHonorCard() {
+            const canvas = document.getElementById('ai-eval-canvas');
+            if (!canvas) return;
+            try {
+                const link = document.createElement('a');
+                link.download = `ESG_QUEST_榮譽認證_${document.getElementById('eval-medal-title').textContent}.png`;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            } catch (e) {
+                showToast("手機上請直接長按上方的證書圖卡，即可直接儲存認證卡至您的相簿！");
+            }
+        }
+
+        function displayEvaluation(data, textInput) {
+            currentEvalData = data;
+            document.getElementById('ai-loading-bar').classList.add('hidden');
+            
+            const evalCard = document.getElementById('ai-evaluation-card');
+            evalCard.classList.remove('hidden');
+
+            document.getElementById('eval-medal-title').textContent = data.medalTitle;
+            document.getElementById('eval-content').textContent = data.praiseZh;
+
+            const primarySdg = data.sdgIds[0] || 11;
+            drawHonorCard(data.medalTitle, primarySdg, textInput);
+
+            // 動態繪製 SDGs 徽章
+            const badgeContainer = document.getElementById('eval-sdg-badges');
+            badgeContainer.innerHTML = '';
+            data.sdgIds.forEach(id => {
+                const badge = document.createElement('span');
+                badge.className = `inline-block text-white font-black px-2.5 py-1 rounded-xl text-xs ${colors[id-1]}`;
+                badge.textContent = `SDG ${id} : ${sdgsNames[id]}`;
+                badgeContainer.appendChild(badge);
+            });
+
+            if (autoplaySpeech) {
+                setTimeout(() => {
+                    playEvalTTS('zh');
+                }, 300);
+            }
+        }
+
+        function playEvalTTS(langType = 'zh') {
+            if (!currentEvalData || !synth) return;
+            synth.cancel();
+
+            const speechText = (langType === 'tw') ? currentEvalData.praiseTw : currentEvalData.praiseZh;
+            evalUtterance = new SpeechSynthesisUtterance(speechText);
+            evalUtterance.lang = 'zh-TW';
+            evalUtterance.rate = 0.85;
+            synth.speak(evalUtterance);
+        }
+    </script>
+
+    <!-- ==================== 3. 經典翻牌對抗邏輯 ==================== -->
+    <script>
+        let memCards = [];
+        let memFlipped = [];
+        let memMatched = 0;
+        let memMoves = 0;
+        let memSeconds = 0;
+        let memTimerInterval = null;
+        let memIsTimerRunning = false;
+        let memCanFlip = true;
+        let memCurrentTurn = 'red'; // 'red' | 'blue'
+        let memTeamScores = { red: 0, blue: 0 };
+        let currentMemModalId = 1;
+        let memMode = 'single';
+
+        function toggleMemoryMode(mode) {
+            memMode = mode;
+            document.getElementById('mem-mode-single').className = (mode === 'single') ? 
+                "px-4 py-2 rounded-xl font-black text-sm bg-indigo-600 text-white shadow-lg" : 
+                "px-4 py-2 rounded-xl font-black text-sm bg-slate-950 text-slate-400 border border-slate-800 hover:text-slate-100";
+            document.getElementById('mem-mode-team').className = (mode === 'team') ? 
+                "px-4 py-2 rounded-xl font-black text-sm bg-indigo-600 text-white shadow-lg" : 
+                "px-4 py-2 rounded-xl font-black text-sm bg-slate-950 text-slate-400 border border-slate-800 hover:text-slate-100";
+
+            if (mode === 'single') {
+                document.getElementById('mem-panel-single').classList.remove('hidden');
+                document.getElementById('mem-panel-team').classList.add('hidden');
+            } else {
+                document.getElementById('mem-panel-single').classList.add('hidden');
+                document.getElementById('mem-panel-team').classList.remove('hidden');
+            }
+            initMemoryGame();
+        }
+
+        function initMemoryGame() {
+            const board = document.getElementById('mem-game-board');
+            board.innerHTML = '';
+            memFlipped = [];
+            memMatched = 0;
+            memMoves = 0;
+            memCanFlip = true;
+
+            clearInterval(memTimerInterval);
+            memSeconds = 0;
+            memIsTimerRunning = false;
+            document.getElementById('mem-timer').textContent = "00:00";
+            document.getElementById('mem-moves').textContent = "0";
+            document.getElementById('mem-matches').textContent = "0 / 6";
+
+            memTeamScores.red = 0;
+            memTeamScores.blue = 0;
+            memCurrentTurn = 'red';
+            document.getElementById('mem-score-red').textContent = "0";
+            document.getElementById('mem-score-blue').textContent = "0";
+            updateMemoryTurnUI();
+
+            const allIds = Array.from({ length: 17 }, (_, i) => i + 1);
+            const selectedIds = [];
+            while (selectedIds.length < 6) {
+                const randIndex = Math.floor(Math.random() * allIds.length);
+                selectedIds.push(allIds.splice(randIndex, 1)[0]);
+            }
+
+            const pairs = [...selectedIds, ...selectedIds];
+            for (let i = pairs.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [pairs[i], pairs[j]] = [pairs[j], pairs[i]];
+            }
+
+            pairs.forEach((id, index) => {
+                const card = document.createElement('div');
+                card.className = "relative aspect-square perspective-1000 cursor-pointer active:scale-95 transition-transform";
+                card.dataset.id = id;
+
+                card.innerHTML = `
+                    <div class="preserve-3d duration-500 w-full h-full relative rounded-2xl shadow-xl border-2 border-slate-800">
+                        <div class="backface-hidden absolute inset-0 w-full h-full bg-slate-900 rounded-2xl flex items-center justify-center text-slate-100">
+                            <span class="text-3xl">❓</span>
+                        </div>
+                        <div class="backface-hidden rotate-y-180 absolute inset-0 w-full h-full ${colors[id-1]} rounded-2xl flex flex-col items-center justify-center text-white p-1 text-center">
+                            <span class="text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full">領域 ${id}</span>
+                            <span class="text-3xl my-0.5">${emojis[id-1]}</span>
+                            <span class="text-xs font-black leading-tight">${sdgsNames[id]}</span>
+                        </div>
+                    </div>
+                `;
+
+                card.addEventListener('click', () => handleMemoryClick(card));
+                board.appendChild(card);
+            });
+        }
+
+        function handleMemoryClick(card) {
+            const inner = card.querySelector('.preserve-3d');
+            if (!memCanFlip || inner.classList.contains('card-active') || memFlipped.includes(card)) return;
+
+            if (memMode === 'single' && !memIsTimerRunning) {
+                memIsTimerRunning = true;
+                memTimerInterval = setInterval(() => {
+                    memSeconds++;
+                    const mins = Math.floor(memSeconds / 60).toString().padStart(2, '0');
+                    const secs = (memSeconds % 60).toString().padStart(2, '0');
+                    document.getElementById('mem-timer').textContent = `${mins}:${secs}`;
+                }, 1000);
+            }
+
+            inner.classList.add('card-active');
+            memFlipped.push(card);
+
+            if (memFlipped.length === 2) {
+                memCanFlip = false;
+                memMoves++;
+                document.getElementById('mem-moves').textContent = memMoves;
+
+                const first = memFlipped[0];
+                const second = memFlipped[1];
+                const firstId = first.dataset.id;
+                const secondId = second.dataset.id;
+
+                if (firstId === secondId) {
+                    memMatched++;
+                    
+                    if (memMode === 'single') {
+                        document.getElementById('mem-matches').textContent = `${memMatched} / 6`;
+                    } else {
+                        memTeamScores[memCurrentTurn]++;
+                        document.getElementById('mem-score-red').textContent = memTeamScores.red;
+                        document.getElementById('mem-score-blue').textContent = memTeamScores.blue;
+                    }
+
+                    setTimeout(() => {
+                        first.querySelector('.preserve-3d').classList.add('ring-4', 'ring-cyan-400', 'ring-offset-2');
+                        second.querySelector('.preserve-3d').classList.add('ring-4', 'ring-cyan-400', 'ring-offset-2');
+                        
+                        openMemAIModal(firstId);
+
+                        memFlipped = [];
+                        memCanFlip = true;
+
+                        if (memMatched === 6) {
+                            clearInterval(memTimerInterval);
+                            setTimeout(() => {
+                                showVictoryModal();
+                            }, 1000);
+                        }
+                    }, 500);
+                } else {
+                    setTimeout(() => {
+                        first.querySelector('.preserve-3d').classList.remove('card-active');
+                        second.querySelector('.preserve-3d').classList.remove('card-active');
+                        memFlipped = [];
+                        memCanFlip = true;
+
+                        if (memMode === 'team') {
+                            memCurrentTurn = (memCurrentTurn === 'red') ? 'blue' : 'red';
+                            updateMemoryTurnUI();
+                        }
+                    }, 1000);
+                }
+            }
+        }
+
+        function updateMemoryTurnUI() {
+            const banner = document.getElementById('mem-turn-banner');
+            const cardRed = document.getElementById('mem-score-card-red');
+            const cardBlue = document.getElementById('mem-score-card-blue');
+
+            if (!banner || !cardRed || !cardBlue) return;
+
+            if (memCurrentTurn === 'red') {
+                banner.className = "text-xl md:text-2xl font-black text-rose-500 animate-pulse";
+                banner.innerHTML = "🔴 輪到：【 紅色烈焰戰隊 】翻牌！";
+                cardRed.className = "bg-rose-950/40 p-3 rounded-xl border-4 border-rose-500 scale-105 transition-all shadow-md";
+                cardBlue.className = "bg-slate-950 p-3 rounded-xl border-2 border-transparent opacity-50 scale-95 transition-all";
+            } else {
+                banner.className = "text-xl md:text-2xl font-black text-cyan-400 animate-pulse";
+                banner.innerHTML = "🔵 輪到：【 藍色閃電戰隊 】翻牌！";
+                cardRed.className = "bg-slate-950 p-3 rounded-xl border-2 border-transparent opacity-50 scale-95 transition-all";
+                cardBlue.className = "bg-cyan-950/40 p-3 rounded-xl border-4 border-cyan-500 scale-105 transition-all shadow-md";
+            }
+        }
+
+        // ==================== 4. 翻牌配對成功之 AI 說明 Modal ====================
+        function openMemAIModal(sdgId) {
+            currentMemModalId = sdgId;
+            stopAllTTS();
+
+            const modal = document.getElementById('mem-ai-modal');
+            const localData = localQuizDatabase[sdgId] || localQuizDatabase[1];
+
+            document.getElementById('mem-modal-header').className = `p-4 text-center text-white relative flex-shrink-0 ${colors[sdgId-1]}`;
+            document.getElementById('mem-modal-num').textContent = `SDG 永續領域 ${sdgId}`;
+            document.getElementById('mem-modal-title').textContent = sdgsNames[sdgId];
+            document.getElementById('mem-modal-emoji').textContent = emojis[sdgId-1];
+            document.getElementById('mem-modal-text').textContent = localData.explanation;
+
+            if (memMode === 'team') {
+                const teamName = (memCurrentTurn === 'red') ? "🔴 紅色烈焰" : "🔵 藍色閃電";
+                document.getElementById('mem-modal-action-title').textContent = `解鎖成功！${teamName} 獲得戰能！實踐指南：`;
+            } else {
+                document.getElementById('mem-modal-action-title').textContent = `日常生活實踐特工秘笈：`;
+            }
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.firstElementChild.classList.remove('scale-95');
+                modal.firstElementChild.classList.add('scale-100');
+            }, 50);
+
+            if (autoplaySpeech) {
+                setTimeout(() => {
+                    playMemModalTTS('zh'); 
+                }, 300);
+            }
+        }
+
+        function playMemModalTTS(langType = 'zh') {
+            if (!synth) return;
+            synth.cancel();
+
+            const sdgId = currentMemModalId;
+            const localData = localQuizDatabase[sdgId] || localQuizDatabase[1];
+            
+            let praise = "配對成功！";
+            if (langType === 'tw') {
+                praise = "配對成功！你真正有眼光！";
+            }
+
+            const text = `${praise}。${localData.explanation}`;
+            memUtterance = new SpeechSynthesisUtterance(text);
+            memUtterance.lang = 'zh-TW';
+            memUtterance.rate = 0.85;
+            synth.speak(memUtterance);
+        }
+
+        function closeMemAIModal() {
+            stopAllTTS();
+            const modal = document.getElementById('mem-ai-modal');
+            modal.firstElementChild.classList.remove('scale-100');
+            modal.firstElementChild.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 150);
+        }
+
+        // 大勝利結束
+        function showVictoryModal() {
+            stopAllTTS();
+            const modal = document.getElementById('victory-modal');
+            const stats = document.getElementById('victory-stats');
+
+            if (memMode === 'single') {
+                const mins = Math.floor(memSeconds / 60);
+                const secs = memSeconds % 60;
+                stats.innerHTML = `⏱️ 通關總時間：<span class="text-cyan-400 font-black">${mins} 分 ${secs} 秒</span><br>🔄 翻牌嘗試次數：<span class="text-indigo-400 font-black">${memMoves} 次</span>`;
+            } else {
+                let winner = "";
+                if (memTeamScores.red > memTeamScores.blue) {
+                    winner = "🔴 紅色烈焰戰隊 榮獲冠軍！";
+                } else if (memTeamScores.blue > memTeamScores.red) {
+                    winner = "🔵 藍色閃電戰隊 榮獲冠軍！";
+                } else {
+                    winner = "🤝 兩隊平手！人人都是最強永續先鋒！";
+                }
+                stats.innerHTML = `<span class="text-xl font-black text-cyan-400 block">${winner}</span><br>🔴 紅隊：${memTeamScores.red} 組 | 🔵 藍隊：${memTeamScores.blue} 組`;
+            }
+
+            modal.classList.remove('hidden');
+
+            if (autoplaySpeech) {
+                setTimeout(() => {
+                    const winSpeech = new SpeechSynthesisUtterance("任務大通關！恭喜你們，所有永續特工戰能已經完全充飽！");
+                    winSpeech.lang = 'zh-TW';
+                    winSpeech.rate = 0.85;
+                    synth.speak(winSpeech);
+                }, 300);
+            }
+        }
+
+        function closeVictoryModal() {
+            document.getElementById('victory-modal').classList.add('hidden');
+            initMemoryGame();
+        }
+
+        // 預設載入首頁任務
+        window.onload = function() {
+            generateAIQuiz(1); 
+        };
+    </script>
+</body>
+</html>
